@@ -207,25 +207,7 @@ product-return-analysis/
 
 ## 九、Git 规范
 
-分支：
-
-```text
-main
-└── develop
-    ├── feature/data-clean
-    ├── feature/feature-engineering
-    ├── feature/decision-tree
-    ├── feature/backend-fastapi
-    └── feature/frontend-vue3
-```
-
-Commit 类型：
-
-```text
-feat / fix / docs / refactor / test / chore
-```
-
-模块之间通过清晰的数据文件或 API 契约交接。修改其他成员负责的核心契约前，应同步更新本目录文档。
+Git 分支、Commit 信息和模块协作规则已独立维护在 [`skill/git-conventions/SKILL.md`](../skill/git-conventions/SKILL.md)，提交或跨模块修改前请遵循该 skill。
 
 ## 十、当前已确定事项
 
