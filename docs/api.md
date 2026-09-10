@@ -51,6 +51,7 @@
       "tables": [
         "pr_orders",
         "pr_model_registry",
+        "pr_stats",
         "pr_predictions"
       ]
     }
@@ -98,7 +99,55 @@
 }
 ```
 
-### 4. 订单列表
+### 4. 促销退货分析
+
+`GET /api/stats/by-promotion`
+
+响应：
+
+```json
+{
+  "items": [
+    {
+      "is_promotion": 0,
+      "sample_count": 680,
+      "returned_count": 102,
+      "return_rate": 0.15
+    },
+    {
+      "is_promotion": 1,
+      "sample_count": 320,
+      "returned_count": 81,
+      "return_rate": 0.253125
+    }
+  ],
+  "data_version": "20260910-001",
+  "updated_at": "2026-09-10T12:00:00Z"
+}
+```
+
+### 5. 价格区间退货分析
+
+`GET /api/stats/by-price-range`
+
+响应：
+
+```json
+{
+  "items": [
+    {
+      "price_range": "0-100",
+      "sample_count": 260,
+      "returned_count": 58,
+      "return_rate": 0.2230769
+    }
+  ],
+  "data_version": "20260910-001",
+  "updated_at": "2026-09-10T12:00:00Z"
+}
+```
+
+### 6. 订单列表
 
 `GET /api/orders?page=1&page_size=20&category=服饰&returned=1`
 
@@ -123,7 +172,7 @@
 }
 ```
 
-### 5. 退货预测
+### 7. 退货预测
 
 `POST /api/returns/predict`
 
@@ -161,7 +210,7 @@
 - `is_promotion` 只能为 `0` 或 `1`；
 - `freight >= 0`。
 
-### 6. 模型指标
+### 8. 模型指标
 
 `GET /api/model/metrics`
 
@@ -184,7 +233,7 @@
 
 真实项目必须返回实际实验结果；示例数值不能直接用于汇报。
 
-### 7. 特征重要性
+### 9. 特征重要性
 
 `GET /api/model/features`
 
@@ -205,7 +254,7 @@
 }
 ```
 
-### 8. 决策树规则
+### 10. 决策树规则
 
 `GET /api/model/rules?limit=20`
 
@@ -229,7 +278,7 @@
 }
 ```
 
-### 9. 测试集预测结果
+### 11. 测试集预测结果
 
 `GET /api/model/predictions?limit=200`
 

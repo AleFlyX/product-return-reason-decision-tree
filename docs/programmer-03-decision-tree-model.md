@@ -2,15 +2,15 @@
 
 ## 一、岗位目标
 
-程序员③从 HDFS 读取程序员②交付的训练集和测试集，训练可解释的决策树，输出评估指标、特征重要性、规则和可被 FastAPI 加载的完整模型文件。
+程序员③从 HDFS 读取程序员②交付的原始字段训练集和测试集，负责拟合预处理器与决策树，输出评估指标、特征重要性、规则和可被 FastAPI 加载的完整模型文件。
 
 ## 二、输入与输出
 
 输入：
 
 ```text
-/project/product-return/feature/train/data_version=<data_version>/
-/project/product-return/feature/test/data_version=<data_version>/
+/project/product-return/feature-split/train/data_version=<data_version>/
+/project/product-return/feature-split/test/data_version=<data_version>/
 /project/product-return/feature/schema/data_version=<data_version>/
 ```
 
@@ -181,7 +181,7 @@ category_服饰 <= 0.5
 ## 十、验收清单
 
 - [ ] 模型从 HDFS 训练数据生成。
-- [ ] 完整 Pipeline 可加载，不需要额外手工编码。
+- [ ] 完整 Pipeline 由程序员③拟合并保存，可直接接收 API 原始字段。
 - [ ] 指标来自独立测试集。
 - [ ] 模型文件、指标、规则和元数据在 HDFS 同一版本目录。
 - [ ] 规则中的类别可读，数值阈值保留原始单位。

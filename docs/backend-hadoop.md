@@ -184,6 +184,7 @@ DATA_BACKEND=csv_fallback
       "tables": [
         "pr_orders",
         "pr_model_registry",
+        "pr_stats",
         "pr_predictions"
       ]
     }

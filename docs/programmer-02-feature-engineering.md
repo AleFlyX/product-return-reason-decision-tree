@@ -10,7 +10,7 @@ HDFS return_model
   → 标签分布检查
   → 训练/测试划分
   → 类别编码和数值特征处理
-  → Pipeline 固化
+  → 特征 schema 和数据划分固化
   → HDFS feature 区
 ```
 
@@ -25,17 +25,16 @@ HDFS return_model
 输出：
 
 ```text
-/project/product-return/feature/train/batch_id=<batch_id>/
-/project/product-return/feature/test/batch_id=<batch_id>/
-/project/product-return/feature/schema/batch_id=<batch_id>/
+/project/product-return/feature-split/train/batch_id=<batch_id>/
+/project/product-return/feature-split/test/batch_id=<batch_id>/
+/project/product-return/feature-split/schema/batch_id=<batch_id>/
 /project/product-return/reports/feature_report/batch_id=<batch_id>/
 ```
 
 本地调试可以同步生成：
 
 ```text
-model/saved/preprocessor.joblib
-model/saved/feature_names.json
+data/reports/feature_schema.json
 data/reports/feature_report.json
 ```
 
@@ -118,20 +117,19 @@ train_test_split(
 - 退货类比例在训练集和测试集之间保持可比；
 - 如果数据有用户或商品分组，优先评估 Group split 是否更合理。
 
-## 六、Pipeline 固化
+## 六、预处理配置与 Pipeline 所有权
 
-必须保存完整 Pipeline，而不是只保存编码器：
+程序员②负责定义并交付预处理配置、特征 schema 和原始训练/测试划分，但不拟合分类器，也不交付一个包含未训练分类器的“完整 Pipeline”。完整 Pipeline 由程序员③在训练阶段拟合并保存。
 
 ```python
-Pipeline(
-    steps=[
-        ("preprocess", preprocessor),
-        ("classifier", classifier),
-    ]
-)
+preprocessor_config = {
+    "categorical_features": ["category", "season"],
+    "numeric_features": ["price", "is_promotion", "freight"],
+    "unknown_category_policy": "ignore",
+}
 ```
 
-程序员③训练时使用这一份 Pipeline；程序员④在线预测时加载同一份 Pipeline。任何手工修改类别顺序的做法都必须禁止。
+程序员③使用这份配置在训练集上拟合预处理器和决策树，并保存包含两者的完整 Pipeline。程序员④在线预测时只加载程序员③交付的已拟合 Pipeline。任何手工修改类别顺序的做法都必须禁止。
 
 ## 七、特征报告
 
@@ -142,7 +140,6 @@ Pipeline(
   "batch_id": "20260910-001",
   "feature_cols": ["category", "price", "is_promotion", "season", "freight"],
   "target_col": "returned",
-  "encoded_feature_count": 12,
   "train_samples": 700,
   "test_samples": 300,
   "train_return_rate": 0.18,
@@ -156,22 +153,21 @@ Pipeline(
 
 ## 八、HDFS 交付
 
-特征文件要带版本目录：
+训练/测试划分文件要带版本目录。文件保存清洗后的原始字段和 `returned`，不是已经经过 One-Hot 的矩阵：
 
 ```text
-/project/product-return/feature/train/data_version=<data_version>/part-*.parquet
-/project/product-return/feature/test/data_version=<data_version>/part-*.parquet
+/project/product-return/feature-split/train/data_version=<data_version>/part-*.parquet
+/project/product-return/feature-split/test/data_version=<data_version>/part-*.parquet
 ```
 
-禁止覆盖已用于训练的特征版本。程序员③必须能够通过 `data_version` 复现同一训练输入。
+禁止覆盖已用于训练的划分版本。程序员③必须能够通过 `data_version` 复现同一训练输入，并在自己的模型目录中保存 One-Hot 后的特征名称。
 
 ## 九、交接关系
 
 交给程序员③：
 
 - HDFS 训练集和测试集路径；
-- 完整预处理 Pipeline；
-- 编码后特征名称；
+- 预处理配置和特征 schema；
 - 标签分布；
 - 泄漏检查报告；
 - 数据版本和划分随机种子。
@@ -179,7 +175,7 @@ Pipeline(
 交给程序员④：
 
 - 在线预测所需原始字段；
-- Pipeline 文件或 HDFS 路径；
+- 训练后的完整 Pipeline 由程序员③交付，程序员②提供其输入 schema；
 - 未知类别处理规则；
 - 特征 schema 版本。
 
@@ -188,6 +184,6 @@ Pipeline(
 - [ ] 训练/测试集来自同一批次且没有订单交叉。
 - [ ] 测试集没有参与预处理器拟合。
 - [ ] 退货发生后的字段未进入特征。
-- [ ] HDFS feature train/test 目录可读取。
-- [ ] Pipeline 可独立加载并转换一条 API 请求。
+- [ ] HDFS feature-split train/test 目录可读取。
+- [ ] 预处理配置、特征 schema 和划分版本均已记录。
 - [ ] 特征名称、版本、随机种子和标签分布均已记录。

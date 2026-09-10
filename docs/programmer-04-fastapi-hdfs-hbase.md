@@ -83,7 +83,24 @@ backend/app/
 
 只有 `status=ready` 的模型可以成为当前模型。
 
-### 3. 预测结果表：`pr_predictions`
+### 3. 统计表：`pr_stats`
+
+```text
+create 'pr_stats', 's', 'meta'
+```
+
+统计批处理由程序员④负责：从 HDFS 清洗区或报告读取指定 `data_version`，计算聚合结果并写入 HBase。API 只读取已登记版本的统计行，不在请求线程中扫描 HDFS 全量数据。
+
+| RowKey | 用途 |
+| --- | --- |
+| `overview` | 全局订单数、退货数、退货率、平均价格、平均运费 |
+| `category#<category>` | 类目样本量、退货数、退货率 |
+| `promotion#0` / `promotion#1` | 促销状态样本量、退货数、退货率 |
+| `price_range#<range>` | 价格区间样本量、退货数、退货率 |
+
+列族 `s` 保存统计值，列族 `meta` 保存 `data_version`、`updated_at` 和统计口径。
+
+### 4. 预测结果表：`pr_predictions`
 
 | 项目 | 约定 |
 | --- | --- |
@@ -105,6 +122,7 @@ HBASE_PORT=9090
 HBASE_NAMESPACE=product_return
 HBASE_ORDERS_TABLE=pr_orders
 HBASE_MODEL_TABLE=pr_model_registry
+HBASE_STATS_TABLE=pr_stats
 HBASE_PREDICTIONS_TABLE=pr_predictions
 MODEL_NAME=decision-tree
 MODEL_VERSION=dt-20260910-001
@@ -124,7 +142,7 @@ MODEL_VERSION=dt-20260910-001
   "model_version": "dt-20260910-001",
   "dependencies": {
     "hdfs": {"status": "ok", "root": "/project/product-return"},
-    "hbase": {"status": "ok", "tables": ["pr_orders", "pr_model_registry", "pr_predictions"]}
+    "hbase": {"status": "ok", "tables": ["pr_orders", "pr_model_registry", "pr_stats", "pr_predictions"]}
   },
   "degraded": false
 }
@@ -140,8 +158,10 @@ HDFS 或 HBase 连接失败时：
 
 | 接口 | 数据来源 |
 | --- | --- |
-| `/api/stats/overview` | HBase 预聚合结果或 HDFS 报告 |
-| `/api/stats/by-category` | HBase 统计表或 HDFS 统计结果 |
+| `/api/stats/overview` | HBase `pr_stats`, RowKey `overview` |
+| `/api/stats/by-category` | HBase `pr_stats`, RowKey 前缀 `category#` |
+| `/api/stats/by-promotion` | HBase `pr_stats`, RowKey 前缀 `promotion#` |
+| `/api/stats/by-price-range` | HBase `pr_stats`, RowKey 前缀 `price_range#` |
 | `/api/orders` | HBase `pr_orders` |
 | `/api/returns/predict` | HBase 模型注册 + HDFS 模型文件 |
 | `/api/model/metrics` | HDFS 指标 JSON或 HBase 模型注册 |
@@ -154,7 +174,7 @@ HDFS 或 HBase 连接失败时：
 启动 HDFS
   → 检查项目目录和权限
   → 启动 HBase
-  → 创建 pr_orders/pr_model_registry/pr_predictions
+  → 创建 pr_orders/pr_model_registry/pr_stats/pr_predictions
   → 写入订单数据和模型注册信息
   → 启动 FastAPI
   → 访问 /api/health
