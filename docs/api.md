@@ -40,7 +40,22 @@
   "status": "ok",
   "service": "product-return-analysis-api",
   "model_loaded": true,
-  "model_version": "2026-09-10"
+  "model_version": "dt-20260910-001",
+  "dependencies": {
+    "hdfs": {
+      "status": "ok",
+      "root": "/project/product-return"
+    },
+    "hbase": {
+      "status": "ok",
+      "tables": [
+        "pr_orders",
+        "pr_model_registry",
+        "pr_predictions"
+      ]
+    }
+  },
+  "degraded": false
 }
 ```
 
@@ -240,3 +255,4 @@
 - 前端不得依赖未在本文档声明的字段。
 - 接口变更必须同步修改 Pydantic schema、前端 API 封装和本文件。
 - 模型未加载时，预测和模型分析接口应返回明确的 503 错误，而不是空数据。
+- HDFS 或 HBase 不可用时，相关接口应返回明确的 503 或降级状态，不得用空数组伪装正常响应。

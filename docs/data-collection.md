@@ -135,7 +135,7 @@ data/
     └── cleaning_report.json
 ```
 
-如果需要进入 HDFS，再额外输出：
+正式环境必须写入 HDFS；本地 CSV 仅用于开发。额外输出：
 
 ```text
 data/clean/return_model.tsv
@@ -172,7 +172,13 @@ order_id, category, price, is_promotion, season, freight, returned
 
 示例中的数量 `0` 只是格式示意，不能当作最终实验数据；状态名称应替换为数据源的实际映射结果。
 
-## 八、交付验收
+## 八、HDFS 交付验收
+
+- [ ] 原始、清洗和报告文件已写入对应 HDFS 批次目录。
+- [ ] HDFS 上传后已校验行数、文件大小和批次号。
+- [ ] 已生成 `manifest.json`，记录数据版本和校验摘要。
+
+## 九、交付验收
 
 - [ ] 原始订单和退货文件来源合法且可追溯。
 - [ ] 订单和退货字段与数据字典一致。
@@ -184,7 +190,7 @@ order_id, category, price, is_promotion, season, freight, returned
 - [ ] 已输出 CSV；若启用大数据链路，已输出 TSV。
 - [ ] 程序员②可以直接读取 `return_model.csv`。
 
-## 九、与其他模块的协作
+## 十、与其他模块的协作
 
 - 与产品经理确认观察窗口、类目粒度和数据权限；
 - 与程序员②确认特征是否足够、类别是否统一；

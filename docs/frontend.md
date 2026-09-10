@@ -5,9 +5,10 @@
 ```text
 frontend/src/
 ├── api/
-│   ├── stats.js
-│   ├── orders.js
-│   └── model.js
+│   ├── client.ts
+│   ├── stats.ts
+│   ├── orders.ts
+│   └── model.ts
 ├── views/
 │   ├── Overview.vue
 │   ├── ReturnAnalysis.vue
@@ -20,7 +21,7 @@ frontend/src/
 │   ├── RuleList.vue
 │   └── RequestState.vue
 └── router/
-    └── index.js
+    └── index.ts
 ```
 
 ## 二、页面功能
@@ -35,6 +36,8 @@ frontend/src/
 - 类目数；
 - 平均商品价格；
 - 数据更新时间。
+- HDFS/HBase 连接状态；
+- 当前模型版本和降级状态。
 
 ### 2. 退货分析页
 
@@ -119,3 +122,4 @@ VITE_API_BASE_URL=http://localhost:8000
 - [ ] 错误、加载和空数据状态完整。
 - [ ] 模型解释页能展示特征重要性和规则。
 - [ ] 后端关闭时页面不会崩溃或白屏。
+- [ ] HDFS/HBase 不可用时显示明确的依赖错误，不显示伪造的零值。

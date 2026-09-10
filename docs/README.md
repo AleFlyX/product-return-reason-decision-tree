@@ -20,7 +20,7 @@
 | 数据处理 | Python、Pandas、NumPy |
 | 特征工程 | scikit-learn `ColumnTransformer`、`OneHotEncoder` |
 | 机器学习 | scikit-learn `DecisionTreeClassifier` |
-| 数据存储 | CSV/TSV；HDFS、Hive、HBase 按课程要求可选接入 |
+| 数据存储 | HDFS 必接入；HBase 必接入；Hive 可选；CSV/TSV 仅作本地开发交换格式 |
 | 后端 | Python、FastAPI、Pydantic、Uvicorn |
 | 前端 | Vue 3、Vite、Vue Router、Axios、ECharts |
 | 工程协作 | Git、GitHub |
@@ -33,6 +33,7 @@
 4. 将决策树规则转换为前端可展示的文本或 JSON。
 5. 使用 FastAPI 提供概览、预测、指标、特征重要性和规则接口。
 6. 使用 Vue 3 + ECharts 展示退货率、类别对比和模型分析结果。
+7. 完成 HDFS 批处理链路和 HBase 在线查询链路的部署、联调和验收。
 
 ## 二、业务边界与标签口径
 
@@ -85,7 +86,7 @@ FastAPI REST API
 Vue 3 + ECharts 分析页面
 ```
 
-HDFS/Hive/HBase 是可选的数据规模扩展。没有大数据组件时，核心清洗、训练和 API 仍应可以基于本地 CSV 独立运行。
+HDFS 和 HBase 是本项目的必需基础设施。HDFS 负责原始数据、清洗数据、训练集和模型产物的批量存储；HBase 负责订单级明细、标签、预测结果和服务元数据的在线查询。Hive 可以作为统计分析层，但不能替代 HDFS 或 HBase。没有大数据组件时只能进行本地开发，不能视为最终验收通过。
 
 ## 四、核心数据约定
 
@@ -137,6 +138,11 @@ product-return-analysis/
 │   ├── backend-hadoop.md
 │   ├── frontend.md
 │   ├── data-collection.md
+│   ├── programmer-01-data-pipeline.md
+│   ├── programmer-02-feature-engineering.md
+│   ├── programmer-03-decision-tree-model.md
+│   ├── programmer-04-fastapi-hdfs-hbase.md
+│   ├── programmer-05-vue3-echarts.md
 │   └── 03-商品退货原因分析-决策树.md
 ├── data/
 │   ├── raw/
@@ -180,7 +186,7 @@ product-return-analysis/
 | 程序员① | 订单/退货数据采集、清洗和标签构造 |
 | 程序员② | 特征工程、数据集划分和预处理 Pipeline |
 | 程序员③ | 决策树训练、评估、规则和模型文件 |
-| 程序员④ | FastAPI、数据访问和可选 HDFS/Hive/HBase |
+| 程序员④ | FastAPI、HDFS/HBase 数据访问和可选 Hive |
 | 程序员⑤ | Vue 3、ECharts、页面交互和系统展示 |
 
 ## 八、验收标准
@@ -194,7 +200,10 @@ product-return-analysis/
 - [ ] FastAPI 能返回健康检查、概览、预测、指标和规则。
 - [ ] 前端能处理加载中、空数据、接口失败和模型未加载状态。
 - [ ] 未将退货发生后的字段泄漏到预测特征。
-- [ ] HDFS/Hive/HBase 启用或未启用时，本地核心链路均有明确运行方式。
+- [ ] 原始、清洗、训练和模型文件已写入 HDFS，并能通过路径或版本追溯。
+- [ ] 订单级明细、`returned` 标签和预测结果已写入 HBase，并能按 `order_id` 查询。
+- [ ] FastAPI 在 HDFS/HBase 可用时走正式数据链路，健康检查能报告依赖状态。
+- [ ] Hive 若启用，只作为分析查询层，不替代 HDFS 或 HBase。
 
 ## 九、Git 规范
 
@@ -227,4 +236,6 @@ feat / fix / docs / refactor / test / chore
 - [x] 前端使用 Vue 3 + ECharts。
 - [x] 预测特征不包含退货发生后的字段。
 - [ ] 最终数据源和脱敏方式。
-- [ ] 是否接入 HDFS、Hive 或 HBase。
+- [x] HDFS 作为批处理主存储。
+- [x] HBase 作为在线查询和服务元数据存储。
+- [ ] 是否增加 Hive 分析层。

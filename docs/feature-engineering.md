@@ -6,10 +6,10 @@
 
 ## 二、输入与输出
 
-输入：
+正式输入：
 
 ```text
-data/clean/return_model.csv
+/project/product-return/clean/return_model/batch_id=<batch_id>/
 ```
 
 预测特征：
@@ -37,6 +37,7 @@ target_col = "returned"
 - 训练特征名称；
 - 标签分布报告；
 - 泄漏检查报告。
+- HDFS train/test 特征目录和 `data_version`。
 
 ## 三、处理规则
 

@@ -84,7 +84,7 @@ min_samples_leaf = 5, 10, 20
 ## 六、模型文件
 
 ```text
-model/saved/
+/project/product-return/model/model_name=decision-tree/model_version=<model_version>/
 ├── return_decision_tree.joblib
 ├── metrics.json
 ├── feature_importance.json
@@ -103,3 +103,4 @@ model/saved/
 - [ ] 特征重要性名称能映射回类别或原始字段。
 - [ ] 规则中的类别名称可读，阈值保留原始单位。
 - [ ] 训练配置和模型版本已记录。
+- [ ] 模型产物已写入 HDFS，并在 HBase 模型注册表登记。

@@ -12,6 +12,7 @@
 - [接口说明](docs/api.md)
 - [数据字典](docs/data-dictionary.md)
 - [决策树专题方案](docs/03-商品退货原因分析-决策树.md)
+- [五个程序员岗位详细交接文档](docs/DocMap.md)
 
 ## 当前模型
 
@@ -21,4 +22,6 @@
 - 主要特征：`category`、`price`、`is_promotion`、`season`、`freight`
 - 后端：FastAPI
 - 前端：Vue 3 + ECharts
-- HDFS/Hive/HBase：可选扩展，不作为本地运行前提
+- HDFS：批处理数据主存储，项目必接入
+- HBase：订单级在线查询和服务元数据存储，项目必接入
+- Hive：可选分析层，不替代 HDFS 和 HBase

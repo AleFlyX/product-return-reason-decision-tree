@@ -1,6 +1,6 @@
 # 文档地图
 
-本项目主题为“商品退货原因分析”。文档按项目总览、需求架构、数据、模型、服务和交付计划组织。
+本项目主题为“商品退货原因分析”。文档按项目总览、需求架构、数据、模型、服务和交付计划组织。HDFS 与 HBase 是正式交付链路，五个程序员各自的详细任务书是实施入口。
 
 | 文档 | 作用 | 主要负责人 |
 | --- | --- | --- |
@@ -12,10 +12,15 @@
 | [feature-engineering.md](feature-engineering.md) | 编码、划分、泄漏检查和 Pipeline | 程序员② |
 | [03-商品退货原因分析-决策树.md](03-商品退货原因分析-决策树.md) | 决策树项目方案和答辩重点 | 程序员③ |
 | [model.md](model.md) | 训练、评估、规则导出和模型交付 | 程序员③ |
-| [backend-hadoop.md](backend-hadoop.md) | FastAPI、数据访问和可选大数据链路 | 程序员④ |
+| [backend-hadoop.md](backend-hadoop.md) | FastAPI、HDFS/HBase 数据访问和服务链路 | 程序员④ |
 | [api.md](api.md) | REST API 请求、响应和错误契约 | 程序员④ |
 | [frontend.md](frontend.md) | Vue 3 页面、图表和状态处理 | 程序员⑤ |
 | [development-plan.md](development-plan.md) | 阶段、依赖、里程碑和交付 | 项目经理 |
+| [programmer-01-data-pipeline.md](programmer-01-data-pipeline.md) | 订单/退货采集、清洗、标签和 HDFS 入湖 | 程序员① |
+| [programmer-02-feature-engineering.md](programmer-02-feature-engineering.md) | 特征工程、数据划分和 HDFS 训练数据 | 程序员② |
+| [programmer-03-decision-tree-model.md](programmer-03-decision-tree-model.md) | 决策树训练、评估、规则和模型文件 | 程序员③ |
+| [programmer-04-fastapi-hdfs-hbase.md](programmer-04-fastapi-hdfs-hbase.md) | FastAPI、HDFS/HBase 接入和服务化 | 程序员④ |
+| [programmer-05-vue3-echarts.md](programmer-05-vue3-echarts.md) | Vue 3、ECharts、交互和联调 | 程序员⑤ |
 
 ## 阅读顺序
 
@@ -25,8 +30,8 @@ README
   → data-dictionary + data-collection
   → feature-engineering
   → 03-商品退货原因分析-决策树 + model
-  → backend-hadoop + api
-  → frontend
+  → programmer-04-fastapi-hdfs-hbase + backend-hadoop + api
+  → programmer-05-vue3-echarts + frontend
   → development-plan
 ```
 
