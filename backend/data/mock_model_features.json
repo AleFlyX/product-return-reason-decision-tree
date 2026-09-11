@@ -1,0 +1,36 @@
+{
+    "items":  [
+                  {
+                      "feature":  "category_服饰",
+                      "importance":  0.31
+                  },
+                  {
+                      "feature":  "price",
+                      "importance":  0.24
+                  },
+                  {
+                      "feature":  "is_promotion",
+                      "importance":  0.18
+                  },
+                  {
+                      "feature":  "season_夏",
+                      "importance":  0.12
+                  },
+                  {
+                      "feature":  "freight",
+                      "importance":  0.08
+                  },
+                  {
+                      "feature":  "category_数码",
+                      "importance":  0.04
+                  },
+                  {
+                      "feature":  "season_冬",
+                      "importance":  0.02
+                  },
+                  {
+                      "feature":  "category_食品",
+                      "importance":  0.01
+                  }
+              ]
+}
