@@ -1,19 +1,21 @@
-﻿"""Health check logic."""
+"""Health check logic."""
 
 from datetime import datetime, timezone
 
 from app.core.config import settings
 
 
-def check_health(model_loaded: bool) -> dict:
+def check_health(model_loaded: bool, model_version: str = None) -> dict:
     """Return the health payload required by GET /api/health."""
+
+    version = model_version or settings.MODEL_VERSION
 
     if settings.is_csv_fallback:
         return {
             "status": "degraded",
             "service": "product-return-analysis-api",
             "model_loaded": model_loaded,
-            "model_version": settings.MODEL_VERSION,
+            "model_version": version,
             "dependencies": {
                 "hdfs": {"status": "skipped", "root": settings.HDFS_ROOT},
                 "hbase": {
@@ -34,7 +36,7 @@ def check_health(model_loaded: bool) -> dict:
         "status": "ok",
         "service": "product-return-analysis-api",
         "model_loaded": model_loaded,
-        "model_version": settings.MODEL_VERSION,
+        "model_version": version,
         "dependencies": {
             "hdfs": {"status": "ok", "root": settings.HDFS_ROOT},
             "hbase": {

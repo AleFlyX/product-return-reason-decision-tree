@@ -1,6 +1,6 @@
-﻿"""Health check router."""
+"""Health check router."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.core.health import check_health
 
@@ -11,4 +11,4 @@ router = APIRouter()
 def health():
     from app.main import get_model_service
     ms = get_model_service()
-    return check_health(ms.is_loaded)
+    return check_health(ms.is_loaded, ms.model_version)

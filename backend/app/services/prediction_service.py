@@ -1,4 +1,4 @@
-﻿"""Prediction service: runs model inference or falls back to rule-based."""
+"""Prediction service: runs model inference via the active repository."""
 
 from app.core.config import settings
 from app.core.errors import ModelNotLoadedError
@@ -12,4 +12,6 @@ class PredictionService:
     def predict(self, payload: dict) -> dict:
         if not self.model_service.is_loaded:
             raise ModelNotLoadedError("Model is not loaded; prediction is unavailable")
-        return self.repo.predict(payload)
+        result = self.repo.predict(payload)
+        result["model_version"] = self.model_service.model_version
+        return result

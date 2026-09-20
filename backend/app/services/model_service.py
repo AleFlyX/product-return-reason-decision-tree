@@ -1,4 +1,6 @@
-﻿"""Model service: loads model artifacts and returns metrics/features/rules."""
+"""Model service: loads model artifacts and returns metrics/features/rules."""
+
+import json
 
 from app.core.config import settings
 
@@ -8,18 +10,23 @@ class ModelService:
         self.repo = repo
         self._loaded = False
         self._model = None
+        self._version = settings.MODEL_VERSION
 
     def load_model(self):
-        """Attempt to load the model file. In CSV fallback, model is always 'loaded'."""
+        """Load the .joblib model file. In CSV fallback, delegate to repo."""
         if settings.is_csv_fallback:
-            self._loaded = True
-            return True
+            self._loaded = self.repo.load_model()
+            meta_path = settings.MODEL_METADATA
+            if meta_path.exists():
+                with open(meta_path, encoding="utf-8-sig") as f:
+                    meta = json.load(f)
+                self._version = meta.get("model_version", settings.MODEL_VERSION)
+            return self._loaded
         try:
-            import pickle
-            model_path = settings.DATA_DIR / "model.pkl"
+            import joblib
+            model_path = settings.MODEL_FILE
             if model_path.exists():
-                with open(model_path, "rb") as f:
-                    self._model = pickle.load(f)
+                self._model = joblib.load(str(model_path))
                 self._loaded = True
             else:
                 self._loaded = False
@@ -30,6 +37,10 @@ class ModelService:
     @property
     def is_loaded(self) -> bool:
         return self._loaded
+
+    @property
+    def model_version(self) -> str:
+        return self._version
 
     def get_metrics(self) -> dict:
         return self.repo.get_model_metrics()

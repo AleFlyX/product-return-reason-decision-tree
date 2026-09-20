@@ -1,4 +1,4 @@
-﻿"""Application settings and environment configuration."""
+"""Application settings and environment configuration."""
 
 import os
 from pathlib import Path
@@ -21,19 +21,21 @@ class Settings:
     HBASE_PREDICTIONS_TABLE: str = os.getenv("HBASE_PREDICTIONS_TABLE", "pr_predictions")
 
     MODEL_NAME: str = os.getenv("MODEL_NAME", "decision-tree")
-    MODEL_VERSION: str = os.getenv("MODEL_VERSION", "dt-20260910-001")
+    MODEL_VERSION: str = os.getenv("MODEL_VERSION", "dt-20260920-001")
 
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
-    DATA_DIR: Path = Path(os.getenv("DATA_DIR", str(BASE_DIR / "data")))
-    CSV_ORDERS: Path = DATA_DIR / "mock_orders.csv"
-    MODEL_METRICS: Path = DATA_DIR / "mock_model_metrics.json"
-    MODEL_FEATURES: Path = DATA_DIR / "mock_model_features.json"
-    MODEL_RULES: Path = DATA_DIR / "mock_model_rules.json"
-    MODEL_PREDICTIONS: Path = DATA_DIR / "mock_model_predictions.json"
-    STATS_OVERVIEW: Path = DATA_DIR / "mock_stats_overview.json"
-    STATS_CATEGORY: Path = DATA_DIR / "mock_stats_category.json"
-    STATS_PROMOTION: Path = DATA_DIR / "mock_stats_promotion.json"
-    STATS_PRICE: Path = DATA_DIR / "mock_stats_price.json"
+    PROJECT_ROOT: Path = BASE_DIR.parent
+
+    MODEL_DIR: Path = PROJECT_ROOT / "model" / "saved"
+    MODEL_FILE: Path = MODEL_DIR / "return_decision_tree.joblib"
+    MODEL_METRICS: Path = MODEL_DIR / "metrics.json"
+    MODEL_FEATURES: Path = MODEL_DIR / "feature_importance.json"
+    MODEL_RULES: Path = MODEL_DIR / "rules.json"
+    MODEL_METADATA: Path = MODEL_DIR / "model_metadata.json"
+    COMPARISON_REPORT: Path = MODEL_DIR / "comparison_report.json"
+
+    CSV_ORDERS: Path = PROJECT_ROOT / "data" / "clean" / "return_model_mock.csv"
+    FEATURE_SCHEMA: Path = PROJECT_ROOT / "data" / "reports" / "feature_schema.json"
 
     @property
     def is_production(self) -> bool:

@@ -1,0 +1,21 @@
+{
+  "train_accuracy": 0.486,
+  "test_accuracy": 0.4939,
+  "test_precision": 0.071,
+  "test_recall": 0.676,
+  "test_f1": 0.1285,
+  "confusion_matrix": [
+    [
+      4726,
+      5053
+    ],
+    [
+      185,
+      386
+    ]
+  ],
+  "train_samples": 24150,
+  "test_samples": 10350,
+  "returned_rate_train": 0.0552,
+  "returned_rate_test": 0.0552
+}
