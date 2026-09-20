@@ -3,6 +3,7 @@
 所有与业务口径相关的决策都集中在本文件，修改参数即可重跑，不需要改动处理逻辑。
 """
 
+import os
 from pathlib import Path
 
 # ---------------------------------------------------------------- 目录约定
@@ -18,9 +19,36 @@ PREPROCESSING_DIR = REPO_ROOT / "preprocessing"
 # kaggle_ecommerce  : Kaggle 电商订单数据，34500 行，含真实运费，类目间退货率差异达 6 倍
 DATASET_PROFILE = "kaggle_ecommerce"
 
-SYNTHETIC_INPUT_CSV = REPO_ROOT.parents[1] / "ecommerce_returns_synthetic_data.csv"
-KAGGLE_INPUT_CSV = REPO_ROOT.parents[1] / "archive (4)" / "Kaggle_Ecommerce Data.csv"
-DEFAULT_INPUT_CSV = KAGGLE_INPUT_CSV if DATASET_PROFILE == "kaggle_ecommerce" else SYNTHETIC_INPUT_CSV
+# 原始数据（Kaggle_Ecommerce Data.csv）不入库，由程序员①在群内提供。
+# 复现步骤 1 时的约定位置是仓库内 data/raw/，也可用环境变量或 --input 覆盖。
+RAW_DIR = DATA_DIR / "raw"
+
+SYNTHETIC_INPUT_BASENAME = "ecommerce_returns_synthetic_data.csv"
+KAGGLE_INPUT_BASENAME = "Kaggle_Ecommerce Data.csv"
+
+
+def resolve_input_csv() -> Path:
+    """定位当前数据源的原始 CSV。
+
+    查找顺序：环境变量 RETURN_MODEL_RAW_CSV / RETURN_MODEL_RAW_DIR -> 仓库内 data/raw/。
+    原始数据不入库，仓库内不含该文件的完整副本；找不到时由调用方给出可操作的提示，
+    而不是抛出一个指向开发机专属路径的错误。
+    """
+    basename = (
+        KAGGLE_INPUT_BASENAME
+        if DATASET_PROFILE == "kaggle_ecommerce"
+        else SYNTHETIC_INPUT_BASENAME
+    )
+
+    env_csv = os.environ.get("RETURN_MODEL_RAW_CSV")
+    if env_csv:
+        return Path(env_csv)
+
+    env_dir = os.environ.get("RETURN_MODEL_RAW_DIR")
+    if env_dir:
+        return Path(env_dir) / basename
+
+    return RAW_DIR / basename
 
 # ---------------------------------------------------------------- 版本与批次
 BATCH_ID = "20260913-001"
@@ -100,9 +128,12 @@ SHIPPING_FREIGHT = {"Standard": 0.0, "Express": 10.0, "Next-Day": 20.0}
 FREIGHT_IS_DERIVED = True
 
 # ---------------------------------------------------------------- 口径开关
-# status      : 直接采信 Return_Status == "Returned"
-# window_30d  : 在 status 基础上，要求 0 <= Days_to_Return <= OBSERVATION_WINDOW_DAYS
-LABEL_POLICY = "status"
+# 项目默认口径为 30 天观察窗口（docs/data-dictionary.md）：
+#   window_30d     : 只有下单后 OBSERVATION_WINDOW_DAYS 天内发生的退货才记为 returned=1（默认，符合项目要求）
+#   status         : 直接采信合成数据的 Return_Status == "Returned"
+#   returned_field : 直接采信 Kaggle 数据的 returned 字段，不施加观察窗口
+# 该开关对两个数据源分支均生效：build_return_model() 与 build_from_kaggle() 都会读取它。
+LABEL_POLICY = "window_30d"
 OBSERVATION_WINDOW_DAYS = 30
 VALID_RETURN_STATUS = "Returned"
 
