@@ -1,0 +1,196 @@
+[
+  {
+    "rule_id": "leaf-1",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 <= 0.50",
+      "freight <= 6.61",
+      "price > 112.35"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.2535,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-5",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 > 0.50",
+      "freight <= 2.31",
+      "price > 5.70"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.0,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-6",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 > 0.50",
+      "freight > 2.31",
+      "price <= 5.52"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.0,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-8",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight <= 2.17",
+      "freight <= 0.03",
+      "is_promotion <= 0.50"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.0,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-9",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight <= 2.17",
+      "freight <= 0.03",
+      "is_promotion > 0.50"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0.6556,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-10",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight <= 2.17",
+      "freight > 0.03"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.0,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-11",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight > 2.17",
+      "freight <= 4.35",
+      "freight <= 4.29"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.2532,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-13",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight > 2.17",
+      "freight > 4.35",
+      "is_promotion <= 0.50"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.0527,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-14",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight > 2.17",
+      "freight > 4.35",
+      "is_promotion > 0.50"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 0.1764,
+    "sample_count": 1,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-0",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 <= 0.50",
+      "freight <= 6.61",
+      "price <= 112.35"
+    ],
+    "predicted_returned": 0,
+    "return_probability": 1,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-2",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 <= 0.50",
+      "freight > 6.61",
+      "is_promotion <= 0.50"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-3",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 <= 0.50",
+      "freight > 6.61",
+      "is_promotion > 0.50"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-4",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 > 0.50",
+      "freight <= 2.31",
+      "price <= 5.70"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-7",
+    "conditions": [
+      "category_食品生鲜 <= 0.50",
+      "category_服饰 > 0.50",
+      "freight > 2.31",
+      "price > 5.52"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  },
+  {
+    "rule_id": "leaf-12",
+    "conditions": [
+      "category_食品生鲜 > 0.50",
+      "freight > 2.17",
+      "freight <= 4.35",
+      "freight > 4.29"
+    ],
+    "predicted_returned": 1,
+    "return_probability": 0,
+    "sample_count": 0,
+    "model_version": "dt-20260920-001"
+  }
+]

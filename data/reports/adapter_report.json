@@ -1,0 +1,98 @@
+{
+  "source_rows": 34500,
+  "source_columns": [
+    "order_id",
+    "customer_id",
+    "product_id",
+    "category",
+    "price",
+    "discount",
+    "quantity",
+    "payment_method",
+    "order_date",
+    "delivered_date",
+    "region",
+    "returned",
+    "request_date",
+    "return_reason",
+    "total_amount",
+    "shipping_cost",
+    "profit_margin",
+    "customer_age",
+    "customer_gender"
+  ],
+  "column_map": {
+    "order_id": "order_id",
+    "category": "category",
+    "price": "price",
+    "discount": "discount_raw",
+    "shipping_cost": "freight",
+    "order_date": "order_time",
+    "returned": "returned_raw"
+  },
+  "derived_fields": [
+    {
+      "field": "season",
+      "source": "order_date",
+      "rule": "3-5月春 / 6-8月夏 / 9-11月秋 / 12-2月冬（DD/MM/YYYY 解析）",
+      "is_assumption": false
+    },
+    {
+      "field": "is_promotion",
+      "source": "discount",
+      "rule": "discount > 0 记为 1",
+      "is_assumption": false
+    },
+    {
+      "field": "freight",
+      "source": "shipping_cost",
+      "rule": "直接使用原始运费字段，无需派生",
+      "is_assumption": false
+    },
+    {
+      "field": "returned",
+      "source": "returned",
+      "rule": "Yes -> 1，No -> 0",
+      "is_assumption": false
+    }
+  ],
+  "dropped_fields": [
+    "request_date",
+    "return_reason",
+    "delivered_date",
+    "customer_id",
+    "product_id",
+    "quantity",
+    "payment_method",
+    "region",
+    "total_amount",
+    "profit_margin",
+    "customer_age",
+    "customer_gender"
+  ],
+  "label_policy": "returned_field",
+  "observation_window_days": 30,
+  "label_policy_comparison": {
+    "returned_field": {
+      "returned_1": 1903,
+      "returned_0": 32597
+    },
+    "window_30d": {
+      "returned_1": 1599,
+      "returned_0": 32901
+    }
+  },
+  "days_to_return_stats": {
+    "count": 1903,
+    "min": 4.0,
+    "max": 40.0,
+    "negative_count": 0,
+    "beyond_window_count": 304
+  },
+  "unknown_category_count": 0,
+  "unknown_category_values": [],
+  "rows_dropped_invalid_status": 0,
+  "output_rows": 34500,
+  "dataset_profile": "kaggle_ecommerce",
+  "source_path": "D:\\project\\AI实训\\ecommerce_returns\\archive (4)\\Kaggle_Ecommerce Data.csv"
+}

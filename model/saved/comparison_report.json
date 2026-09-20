@@ -1,0 +1,40 @@
+{
+  "experiment": "baseline vs balanced class_weight comparison",
+  "data_version": "return-model-v1",
+  "model_version": "dt-20260920-001",
+  "dataset": {
+    "train_samples": 24150,
+    "test_samples": 10350,
+    "return_rate_train": 0.0552,
+    "return_rate_test": 0.0552
+  },
+  "baseline": {
+    "params": {
+      "max_depth": 4,
+      "min_samples_leaf": 10,
+      "class_weight": null
+    },
+    "train_accuracy": 0.9448,
+    "test_accuracy": 0.9448,
+    "test_precision": 0.0,
+    "test_recall": 0.0,
+    "test_f1": 0.0,
+    "confusion_matrix": [[9779, 0], [571, 0]],
+    "analysis": "模型全部预测为'未退货'，虽然准确率高，但完全检测不出退货样本，无实际使用价值。"
+  },
+  "balanced": {
+    "params": {
+      "max_depth": 4,
+      "min_samples_leaf": 10,
+      "class_weight": "balanced"
+    },
+    "train_accuracy": 0.486,
+    "test_accuracy": 0.4939,
+    "test_precision": 0.071,
+    "test_recall": 0.676,
+    "test_f1": 0.1285,
+    "confusion_matrix": [[4726, 5053], [185, 386]],
+    "analysis": "准确率下降但召回率大幅提升至67.6%，能检测出2/3的退货订单。精确率较低(7.1%)说明误报较多，需结合业务场景权衡。"
+  },
+  "conclusion": "选用 balanced 模型。在退货预测场景下，召回率比准确率更重要——漏掉退货订单的损失远大于误报的成本。后续可通过调整决策阈值、增加特征、换模型等方式进一步优化精确率。"
+}

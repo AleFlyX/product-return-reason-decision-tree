@@ -1,0 +1,72 @@
+[
+  {
+    "feature": "category_食品生鲜",
+    "importance": 0.5463,
+    "source_field": "category"
+  },
+  {
+    "feature": "freight",
+    "importance": 0.221,
+    "source_field": "freight"
+  },
+  {
+    "feature": "category_服饰",
+    "importance": 0.1283,
+    "source_field": "category"
+  },
+  {
+    "feature": "price",
+    "importance": 0.068,
+    "source_field": "price"
+  },
+  {
+    "feature": "is_promotion",
+    "importance": 0.0365,
+    "source_field": "is_promotion"
+  },
+  {
+    "feature": "season_秋",
+    "importance": 0.0,
+    "source_field": "season"
+  },
+  {
+    "feature": "season_夏",
+    "importance": 0.0,
+    "source_field": "season"
+  },
+  {
+    "feature": "season_春",
+    "importance": 0.0,
+    "source_field": "season"
+  },
+  {
+    "feature": "category_运动户外",
+    "importance": 0.0,
+    "source_field": "category"
+  },
+  {
+    "feature": "season_冬",
+    "importance": 0.0,
+    "source_field": "season"
+  },
+  {
+    "feature": "category_美妆",
+    "importance": 0.0,
+    "source_field": "category"
+  },
+  {
+    "feature": "category_电子产品",
+    "importance": 0.0,
+    "source_field": "category"
+  },
+  {
+    "feature": "category_玩具",
+    "importance": 0.0,
+    "source_field": "category"
+  },
+  {
+    "feature": "category_家居",
+    "importance": 0.0,
+    "source_field": "category"
+  }
+]

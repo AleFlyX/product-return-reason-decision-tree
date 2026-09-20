@@ -1,0 +1,122 @@
+{
+  "batch_id": "20260913-001",
+  "data_version": "return-model-v1",
+  "feature_cols": [
+    "category",
+    "price",
+    "is_promotion",
+    "season",
+    "freight"
+  ],
+  "target_col": "returned",
+  "categorical_features": [
+    "category",
+    "season"
+  ],
+  "numeric_features": [
+    "price",
+    "is_promotion",
+    "freight"
+  ],
+  "category_values": {
+    "category": [
+      "家居",
+      "服饰",
+      "玩具",
+      "电子产品",
+      "美妆",
+      "运动户外",
+      "食品生鲜"
+    ],
+    "season": [
+      "冬",
+      "夏",
+      "春",
+      "秋"
+    ]
+  },
+  "dtypes": {
+    "category": "str",
+    "price": "float64",
+    "is_promotion": "int64",
+    "season": "str",
+    "freight": "float64",
+    "returned": "int64"
+  },
+  "unknown_category_policy": "ignore",
+  "scaling": "none",
+  "imputation": {
+    "numeric": "median",
+    "categorical": "UNKNOWN"
+  },
+  "preprocessor_config": {
+    "categorical_features": [
+      "category",
+      "season"
+    ],
+    "numeric_features": [
+      "price",
+      "is_promotion",
+      "freight"
+    ],
+    "unknown_category_policy": "ignore",
+    "scaling": "none",
+    "imputation": {
+      "numeric": "median",
+      "categorical": "UNKNOWN"
+    }
+  },
+  "imputation_parameters": {
+    "fitted_on": "train",
+    "numeric_median": {
+      "price": 45.644999999999996,
+      "is_promotion": 0.0,
+      "freight": 6.11
+    },
+    "categorical_unknown": {
+      "category": "UNKNOWN",
+      "season": "UNKNOWN"
+    }
+  },
+  "encoded_feature_names": [
+    "categorical__category_家居",
+    "categorical__category_服饰",
+    "categorical__category_玩具",
+    "categorical__category_电子产品",
+    "categorical__category_美妆",
+    "categorical__category_运动户外",
+    "categorical__category_食品生鲜",
+    "categorical__season_冬",
+    "categorical__season_夏",
+    "categorical__season_春",
+    "categorical__season_秋",
+    "numeric__price",
+    "numeric__is_promotion",
+    "numeric__freight"
+  ],
+  "encoded_feature_source_map": {
+    "categorical__category_家居": "category",
+    "categorical__category_服饰": "category",
+    "categorical__category_玩具": "category",
+    "categorical__category_电子产品": "category",
+    "categorical__category_美妆": "category",
+    "categorical__category_运动户外": "category",
+    "categorical__category_食品生鲜": "category",
+    "categorical__season_冬": "season",
+    "categorical__season_夏": "season",
+    "categorical__season_春": "season",
+    "categorical__season_秋": "season",
+    "numeric__price": "price",
+    "numeric__is_promotion": "is_promotion",
+    "numeric__freight": "freight"
+  },
+  "online_input_fields": [
+    "category",
+    "price",
+    "is_promotion",
+    "season",
+    "freight"
+  ],
+  "split_seed": 42,
+  "test_size": 0.3
+}
