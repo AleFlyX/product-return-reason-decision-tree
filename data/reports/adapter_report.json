@@ -51,8 +51,8 @@
     },
     {
       "field": "returned",
-      "source": "returned",
-      "rule": "Yes -> 1，No -> 0",
+      "source": "returned / request_date / order_date",
+      "rule": "口径=window_30d：Yes -> 1，再按 30 天观察窗口过滤（超期退货记为 0）",
       "is_assumption": false
     }
   ],
@@ -70,9 +70,10 @@
     "customer_age",
     "customer_gender"
   ],
-  "label_policy": "returned_field",
+  "label_policy": "window_30d",
   "observation_window_days": 30,
   "label_policy_comparison": {
+    "adopted": "window_30d",
     "returned_field": {
       "returned_1": 1903,
       "returned_0": 32597
@@ -94,5 +95,6 @@
   "rows_dropped_invalid_status": 0,
   "output_rows": 34500,
   "dataset_profile": "kaggle_ecommerce",
-  "source_path": "D:\\project\\AI实训\\ecommerce_returns\\archive (4)\\Kaggle_Ecommerce Data.csv"
+  "source_path": "Kaggle_Ecommerce Data.csv",
+  "source_path_note": "仅记录相对路径或文件名，不含本地环境专属路径"
 }
