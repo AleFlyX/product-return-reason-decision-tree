@@ -1,40 +1,90 @@
 {
-  "experiment": "baseline vs balanced class_weight comparison",
+  "experiment": "parameter grid search (4×3×2=24 combinations)",
   "data_version": "return-model-v1",
-  "model_version": "dt-20260920-001",
+  "model_version": "dt-20260921-002",
   "dataset": {
     "train_samples": 24150,
     "test_samples": 10350,
-    "return_rate_train": 0.0552,
-    "return_rate_test": 0.0552
+    "return_rate_train": 0.0463,
+    "return_rate_test": 0.0464
   },
-  "baseline": {
-    "params": {
-      "max_depth": 4,
-      "min_samples_leaf": 10,
-      "class_weight": null
+  "best_params": {
+    "max_depth": 3,
+    "min_samples_leaf": 5,
+    "class_weight": "balanced"
+  },
+  "best_metrics": {
+    "test_accuracy": 0.4689,
+    "test_precision": 0.058,
+    "test_recall": 0.6854,
+    "test_f1": 0.1069,
+    "confusion_matrix": [
+      [
+        4524,
+        5346
+      ],
+      [
+        151,
+        329
+      ]
+    ]
+  },
+  "grid_results_top5": [
+    {
+      "max_depth": 3,
+      "min_samples_leaf": 5,
+      "class_weight": "balanced",
+      "cv_f1_mean": 0.1113,
+      "cv_f1_std": 0.0036,
+      "test_accuracy": 0.4689,
+      "test_precision": 0.058,
+      "test_recall": 0.6854,
+      "test_f1": 0.1069
     },
-    "train_accuracy": 0.9448,
-    "test_accuracy": 0.9448,
-    "test_precision": 0.0,
-    "test_recall": 0.0,
-    "test_f1": 0.0,
-    "confusion_matrix": [[9779, 0], [571, 0]],
-    "analysis": "模型全部预测为'未退货'，虽然准确率高，但完全检测不出退货样本，无实际使用价值。"
-  },
-  "balanced": {
-    "params": {
-      "max_depth": 4,
+    {
+      "max_depth": 3,
       "min_samples_leaf": 10,
-      "class_weight": "balanced"
+      "class_weight": "balanced",
+      "cv_f1_mean": 0.1113,
+      "cv_f1_std": 0.0036,
+      "test_accuracy": 0.4689,
+      "test_precision": 0.058,
+      "test_recall": 0.6854,
+      "test_f1": 0.1069
     },
-    "train_accuracy": 0.486,
-    "test_accuracy": 0.4939,
-    "test_precision": 0.071,
-    "test_recall": 0.676,
-    "test_f1": 0.1285,
-    "confusion_matrix": [[4726, 5053], [185, 386]],
-    "analysis": "准确率下降但召回率大幅提升至67.6%，能检测出2/3的退货订单。精确率较低(7.1%)说明误报较多，需结合业务场景权衡。"
-  },
-  "conclusion": "选用 balanced 模型。在退货预测场景下，召回率比准确率更重要——漏掉退货订单的损失远大于误报的成本。后续可通过调整决策阈值、增加特征、换模型等方式进一步优化精确率。"
+    {
+      "max_depth": 3,
+      "min_samples_leaf": 20,
+      "class_weight": "balanced",
+      "cv_f1_mean": 0.1113,
+      "cv_f1_std": 0.0036,
+      "test_accuracy": 0.4689,
+      "test_precision": 0.058,
+      "test_recall": 0.6854,
+      "test_f1": 0.1069
+    },
+    {
+      "max_depth": 5,
+      "min_samples_leaf": 20,
+      "class_weight": "balanced",
+      "cv_f1_mean": 0.111,
+      "cv_f1_std": 0.0029,
+      "test_accuracy": 0.5061,
+      "test_precision": 0.0556,
+      "test_recall": 0.6042,
+      "test_f1": 0.1019
+    },
+    {
+      "max_depth": 5,
+      "min_samples_leaf": 5,
+      "class_weight": "balanced",
+      "cv_f1_mean": 0.1109,
+      "cv_f1_std": 0.0032,
+      "test_accuracy": 0.5059,
+      "test_precision": 0.0556,
+      "test_recall": 0.6042,
+      "test_f1": 0.1019
+    }
+  ],
+  "conclusion": "选用 cv_f1 最高的参数组合: depth=3, leaf=5, class_weight=balanced. 基于 5 折交叉验证 F1 选择，而非单独依赖测试集召回率。"
 }

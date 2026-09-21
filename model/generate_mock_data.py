@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import os
+
 """
 生成模拟退货订单数据（用于验证训练脚本）
 ========================================
@@ -55,7 +57,9 @@ def main():
     samples = [generate_sample() for _ in range(500)]
     df = pd.DataFrame(samples)
 
-    output_path = r"D:\product-return-reason-decision-tree\data\clean\return_model_mock.csv"
+    output_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "data", "clean", "return_model_mock.csv"
+    )
     df.to_csv(output_path, index=False, encoding="utf-8-sig")
 
     print(f"生成 {len(df)} 条模拟数据")
