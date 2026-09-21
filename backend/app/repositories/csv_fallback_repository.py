@@ -11,7 +11,12 @@ from app.core.config import settings
 
 
 class CSVFallbackRepository:
-    """Reads real data from local files when HDFS/HBase are unavailable."""
+    """Reads real data from local files when HDFS/HBase are unavailable.
+
+    Optimizations:
+      - Orders CSV is cached in memory; only re-reads when file mtime changes.
+      - Row parsing is fault-tolerant; bad rows are skipped instead of 500-ing.
+    """
 
     def __init__(self) -> None:
         self._model = None
@@ -20,37 +25,94 @@ class CSVFallbackRepository:
         self._category_values = None
         self._season_values = None
 
+        # --- CSV cache ---
+        self._orders_cache: list[dict] | None = None
+        self._orders_cache_mtime: float | None = None
+
     # --- helpers ---
 
     @staticmethod
     def _read_json(path: Path) -> Any:
         if not path.exists():
             return {}
-        with open(path, encoding="utf-8-sig") as f:
-            return json.load(f)
+        try:
+            with open(path, encoding="utf-8-sig") as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            return {}
 
     @staticmethod
     def _now() -> str:
         return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+    @staticmethod
+    def _safe_float(val: str | None, default: float = 0.0) -> float:
+        """Safely parse a float; return default on failure."""
+        if val is None or val == "":
+            return default
+        try:
+            return float(val)
+        except (ValueError, TypeError):
+            return default
+
+    @staticmethod
+    def _safe_int(val: str | None, default: int = 0) -> int:
+        """Safely parse an int; return default on failure."""
+        if val is None or val == "":
+            return default
+        try:
+            return int(float(val))
+        except (ValueError, TypeError):
+            return default
+
     def _read_orders_csv(self) -> list[dict]:
-        """Read the real orders CSV and return a list of dicts with typed fields."""
+        """Read the real orders CSV with caching and fault-tolerant parsing.
+
+        - Caches results in memory based on file mtime.
+        - Skips rows with missing/invalid data instead of crashing.
+        """
         path = settings.CSV_ORDERS
         if not path.exists():
             return []
+
+        try:
+            mtime = path.stat().st_mtime
+        except OSError:
+            return []
+
+        # Return cached data if file hasn't changed
+        if self._orders_cache is not None and self._orders_cache_mtime == mtime:
+            return self._orders_cache
+
         rows: list[dict] = []
-        with open(path, encoding="utf-8-sig") as f:
-            reader = csv.DictReader(f)
-            for r in reader:
-                rows.append({
-                    "order_id": r.get("order_id", ""),
-                    "category": r["category"],
-                    "price": float(r["price"]),
-                    "is_promotion": int(r["is_promotion"]),
-                    "season": r["season"],
-                    "freight": float(r["freight"]),
-                    "returned": int(r["returned"]),
-                })
+        try:
+            with open(path, encoding="utf-8-sig") as f:
+                reader = csv.DictReader(f)
+                for r in reader:
+                    try:
+                        category = (r.get("category") or "").strip()
+                        season = (r.get("season") or "").strip()
+                        if not category or not season:
+                            # Skip rows with missing required string fields
+                            continue
+                        rows.append({
+                            "order_id": (r.get("order_id") or "").strip(),
+                            "category": category,
+                            "price": self._safe_float(r.get("price")),
+                            "is_promotion": self._safe_int(r.get("is_promotion")),
+                            "season": season,
+                            "freight": self._safe_float(r.get("freight")),
+                            "returned": self._safe_int(r.get("returned")),
+                        })
+                    except Exception:
+                        # Skip any row that causes an unexpected error
+                        continue
+        except OSError:
+            # If the file can't be read at all, return empty / stale cache
+            return self._orders_cache or []
+
+        self._orders_cache = rows
+        self._orders_cache_mtime = mtime
         return rows
 
     # --- orders ---
@@ -77,7 +139,7 @@ class CSVFallbackRepository:
             "total": total,
         }
 
-    # --- stats (calculated dynamically from CSV) ---
+    # --- stats (calculated from cached CSV) ---
 
     def get_overview(self) -> dict:
         rows = self._read_orders_csv()
@@ -203,7 +265,49 @@ class CSVFallbackRepository:
         return {"items": []}
 
     def get_model_predictions(self, limit: int = 200) -> dict:
-        return {"items": []}
+        """Generate real predictions on a sample of orders from the CSV.
+
+        Uses the loaded .joblib model to predict return probability for each
+        sampled order. If the model is not loaded, falls back to rule-based
+        prediction so the endpoint always returns meaningful data.
+        """
+        rows = self._read_orders_csv()
+        if not rows:
+            return {"items": []}
+
+        # Take a stratified-ish sample: pick every Nth row for diversity
+        sample_size = min(limit, len(rows))
+        step = max(1, len(rows) // sample_size)
+        sampled = rows[::step][:sample_size]
+
+        items = []
+        for idx, row in enumerate(sampled):
+            try:
+                pred_result = self.predict({
+                    "category": row["category"],
+                    "price": row["price"],
+                    "is_promotion": row["is_promotion"],
+                    "season": row["season"],
+                    "freight": row["freight"],
+                })
+                items.append({
+                    "index": idx,
+                    "order_id": row["order_id"],
+                    "category": row["category"],
+                    "price": row["price"],
+                    "is_promotion": row["is_promotion"],
+                    "season": row["season"],
+                    "freight": row["freight"],
+                    "actual_returned": row["returned"],
+                    "predicted_returned": pred_result["predicted_returned"],
+                    "return_probability": pred_result["return_probability"],
+                    "model_version": pred_result.get("model_version", ""),
+                })
+            except Exception:
+                # Skip any row that fails prediction
+                continue
+
+        return {"items": items}
 
     # --- model loading and prediction ---
 

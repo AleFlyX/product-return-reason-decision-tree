@@ -112,6 +112,13 @@ class RuleItem(BaseModel):
 
 class PredictionItem(BaseModel):
     index: int
+    order_id: Optional[str] = None
+    category: Optional[str] = None
+    price: Optional[float] = None
+    is_promotion: Optional[int] = None
+    season: Optional[str] = None
+    freight: Optional[float] = None
     actual_returned: int
     predicted_returned: int
     return_probability: float
+    model_version: Optional[str] = None
