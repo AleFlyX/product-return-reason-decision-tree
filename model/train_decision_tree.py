@@ -44,7 +44,25 @@ TARGET_COL = "returned"
 
 # 默认数据版本
 DATA_VERSION = "return-model-v1"
-MODEL_VERSION = f"dt-{datetime.now().strftime('%Y%m%d')}-002"
+
+def get_git_commit():
+    """获取当前 Git commit hash（提前定义，供模型版本号使用）。"""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(__file__))
+        )
+        return result.stdout.strip()[:12] if result.returncode == 0 else "unknown"
+    except Exception:
+        return "unknown"
+
+def _generate_model_version():
+    """模型版本包含日期+git commit，避免重复覆盖。"""
+    commit = get_git_commit()
+    date_str = datetime.now().strftime('%Y%m%d')
+    return f"dt-{date_str}-{commit}"
+
+MODEL_VERSION = _generate_model_version()
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "saved")
 
@@ -420,19 +438,8 @@ def plot_decision_tree(pipeline: Pipeline, output_path: str):
 
 
 # ============================================================
-# 9. 获取 Git commit
+# 9. 获取依赖版本
 # ============================================================
-
-def get_git_commit():
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            capture_output=True, text=True, cwd=os.path.dirname(__file__)
-        )
-        return result.stdout.strip()[:12] if result.returncode == 0 else "unknown"
-    except Exception:
-        return "unknown"
-
 
 def get_dependency_versions():
     import importlib.metadata
