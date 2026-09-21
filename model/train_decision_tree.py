@@ -67,8 +67,9 @@ MODEL_VERSION = _generate_model_version()
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "saved")
 
 # HDFS 路径
-HDFS_TRAIN_PATH = "/project/product-return/feature-split/train/data_version=return-model-v1/part-0.csv"
-HDFS_TEST_PATH = "/project/product-return/feature-split/test/data_version=return-model-v1/part-0.csv"
+HDFS_TRAIN_PATH = "/project/product-return/feature-split/train/data_version=return-model-v1/"
+HDFS_TEST_PATH = "/project/product-return/feature-split/test/data_version=return-model-v1/"
+HDFS_SCHEMA_PATH = "/project/product-return/feature-split/schema/data_version=return-model-v1/"
 
 # 参数网格
 PARAM_GRID = {
@@ -504,6 +505,7 @@ def save_all(pipeline, metrics, feature_importance, rules, train_time, params,
         "status": "ready",
         "hdfs_train_path": HDFS_TRAIN_PATH,
         "hdfs_test_path": HDFS_TEST_PATH,
+        "hdfs_schema_path": HDFS_SCHEMA_PATH,
         "git_commit": get_git_commit(),
         "dependency_versions": get_dependency_versions(),
         "feature_processing": {

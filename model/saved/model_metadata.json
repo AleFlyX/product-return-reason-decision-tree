@@ -23,8 +23,9 @@
   "created_at": "2026-09-21T19:53:17.971793",
   "artifact_path": "/project/product-return/model/model_name=decision-tree/model_version=dt-20260921-547668a1c65c/",
   "status": "ready",
-  "hdfs_train_path": "/project/product-return/feature-split/train/data_version=return-model-v1/part-0.csv",
-  "hdfs_test_path": "/project/product-return/feature-split/test/data_version=return-model-v1/part-0.csv",
+  "hdfs_train_path": "/project/product-return/feature-split/train/data_version=return-model-v1/",
+  "hdfs_test_path": "/project/product-return/feature-split/test/data_version=return-model-v1/",
+  "hdfs_schema_path": "/project/product-return/feature-split/schema/data_version=return-model-v1/",
   "git_commit": "547668a1c65c",
   "dependency_versions": {
     "pandas": "2.3.3",
