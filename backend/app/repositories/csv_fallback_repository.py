@@ -15,6 +15,7 @@ class CSVFallbackRepository:
 
     Optimizations:
       - Orders CSV is cached in memory; only re-reads when file mtime changes.
+      - JSON model artifacts are also cached by mtime.
       - Row parsing is fault-tolerant; bad rows are skipped instead of 500-ing.
     """
 
@@ -29,17 +30,35 @@ class CSVFallbackRepository:
         self._orders_cache: list[dict] | None = None
         self._orders_cache_mtime: float | None = None
 
+        # --- JSON cache (keyed by path str, value: (mtime, data)) ---
+        self._json_cache: dict[str, tuple[float, Any]] = {}
+
     # --- helpers ---
 
-    @staticmethod
-    def _read_json(path: Path) -> Any:
+    def _read_json(self, path: Path) -> Any:
+        """Read JSON with in-memory cache based on file mtime."""
         if not path.exists():
             return {}
+        path_str = str(path)
+        try:
+            mtime = path.stat().st_mtime
+        except OSError:
+            return {}
+
+        # Return cached data if file hasn't changed
+        cached = self._json_cache.get(path_str)
+        if cached is not None and cached[0] == mtime:
+            return cached[1]
+
         try:
             with open(path, encoding="utf-8-sig") as f:
-                return json.load(f)
+                data = json.load(f)
         except (json.JSONDecodeError, OSError):
+            # Don't cache failures
             return {}
+
+        self._json_cache[path_str] = (mtime, data)
+        return data
 
     @staticmethod
     def _now() -> str:
