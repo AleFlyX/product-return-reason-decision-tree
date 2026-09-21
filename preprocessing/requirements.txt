@@ -1,0 +1,11 @@
+# 程序员② 特征工程模块依赖
+# 安装：pip install -r preprocessing/requirements.txt
+# 说明：仓库此前没有统一的 Python 依赖清单，本文件只声明 preprocessing/ 模块实际用到的依赖。
+
+pandas>=1.5
+numpy>=1.23
+scikit-learn>=1.2
+
+# 生成 parquet 格式的划分文件（docs/programmer-02-feature-engineering.md 第八节要求）
+# 缺失时代码自动降级为 CSV，但正式交付应为 parquet
+pyarrow>=10.0
