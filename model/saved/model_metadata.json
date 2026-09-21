@@ -1,0 +1,73 @@
+{
+  "model_name": "decision-tree",
+  "model_version": "dt-20260921-547668a1c65c",
+  "data_version": "return-model-v1",
+  "model_type": "DecisionTreeClassifier",
+  "pipeline_version": "1.0",
+  "params": {
+    "max_depth": 3,
+    "min_samples_leaf": 5,
+    "class_weight": "balanced"
+  },
+  "feature_cols": [
+    "category",
+    "price",
+    "is_promotion",
+    "season",
+    "freight"
+  ],
+  "target_col": "returned",
+  "train_time_seconds": 0.04,
+  "train_samples": 24150,
+  "test_samples": 10350,
+  "created_at": "2026-09-21T19:53:17.971793",
+  "artifact_path": "/project/product-return/model/model_name=decision-tree/model_version=dt-20260921-547668a1c65c/",
+  "status": "ready",
+  "hdfs_train_path": "/project/product-return/feature-split/train/data_version=return-model-v1/part-0.csv",
+  "hdfs_test_path": "/project/product-return/feature-split/test/data_version=return-model-v1/part-0.csv",
+  "git_commit": "547668a1c65c",
+  "dependency_versions": {
+    "pandas": "2.3.3",
+    "numpy": "2.2.6",
+    "scikit-learn": "1.7.2",
+    "matplotlib": "3.10.8",
+    "joblib": "1.6.0",
+    "python": "3.10.11"
+  },
+  "feature_processing": {
+    "categorical_features": [
+      "category",
+      "season"
+    ],
+    "numeric_features": [
+      "price",
+      "is_promotion",
+      "freight"
+    ],
+    "encoding": "OneHotEncoder(handle_unknown='ignore')",
+    "imputation": {
+      "fitted_on": "train",
+      "numeric_median": {
+        "price": 45.44,
+        "is_promotion": 0.0,
+        "freight": 6.1
+      },
+      "categorical_unknown": {
+        "category": "UNKNOWN",
+        "season": "UNKNOWN"
+      }
+    },
+    "scaling": "none"
+  },
+  "grid_experiment_best": {
+    "max_depth": 3,
+    "min_samples_leaf": 5,
+    "class_weight": "balanced",
+    "cv_f1_mean": 0.1113,
+    "cv_f1_std": 0.0036,
+    "test_accuracy": 0.4689,
+    "test_precision": 0.058,
+    "test_recall": 0.6854,
+    "test_f1": 0.1069
+  }
+}
