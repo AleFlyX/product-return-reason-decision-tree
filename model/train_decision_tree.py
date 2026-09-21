@@ -39,7 +39,7 @@ from sklearn.metrics import (
 
 CATEGORICAL_COLS = ["category", "season"]
 NUMERIC_COLS = ["price", "is_promotion", "freight"]
-FEATURE_COLS = CATEGORICAL_COLS + NUMERIC_COLS
+FEATURE_COLS = ["category", "price", "is_promotion", "season", "freight"]
 TARGET_COL = "returned"
 
 # 默认数据版本
@@ -49,8 +49,8 @@ MODEL_VERSION = f"dt-{datetime.now().strftime('%Y%m%d')}-002"
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "saved")
 
 # HDFS 路径
-HDFS_TRAIN_PATH = "/project/product-return/data/feature-split/train/data_version=return-model-v1/part-0.csv"
-HDFS_TEST_PATH = "/project/product-return/data/feature-split/test/data_version=return-model-v1/part-0.csv"
+HDFS_TRAIN_PATH = "/project/product-return/feature-split/train/data_version=return-model-v1/part-0.csv"
+HDFS_TEST_PATH = "/project/product-return/feature-split/test/data_version=return-model-v1/part-0.csv"
 
 # 参数网格
 PARAM_GRID = {
@@ -92,16 +92,24 @@ def load_data(train_path: str, test_path: str = None):
 # ============================================================
 
 def build_pipeline(params: dict, imputation_config: dict = None) -> Pipeline:
+    """构建 Pipeline，复用 schema 固化的填补参数。"""
     imputation_config = imputation_config or {}
+    numeric_median = imputation_config.get("numeric_median", {})
+    categorical_unknown = imputation_config.get("categorical_unknown", {})
 
-    numeric_imputer = SimpleImputer(
-        strategy="median",
-        fill_value=imputation_config.get("numeric_median", {})
-    )
-    categorical_imputer = SimpleImputer(
-        strategy="constant",
-        fill_value=imputation_config.get("categorical_unknown", "UNKNOWN")
-    )
+    # 为每个数值列单独创建填补器，使用 schema 固化的中位数
+    numeric_transformers = []
+    for col in NUMERIC_COLS:
+        fill_val = numeric_median.get(col, 0.0)
+        numeric_transformers.append((
+            f"num__{col}",
+            SimpleImputer(strategy="constant", fill_value=fill_val),
+            [col],
+        ))
+
+    # 类别列统一用 UNKNOWN 填补（标量值）
+    cat_fill = categorical_unknown.get("category", "UNKNOWN")
+    categorical_imputer = SimpleImputer(strategy="constant", fill_value=cat_fill)
 
     preprocessor = ColumnTransformer(
         [
@@ -113,15 +121,7 @@ def build_pipeline(params: dict, imputation_config: dict = None) -> Pipeline:
                 ]),
                 CATEGORICAL_COLS,
             ),
-            (
-                "numeric",
-                Pipeline([
-                    ("imputer", numeric_imputer),
-                    ("passthrough", "passthrough"),
-                ]),
-                NUMERIC_COLS,
-            ),
-        ]
+        ] + numeric_transformers
     )
 
     classifier = DecisionTreeClassifier(random_state=42, **params)
@@ -421,11 +421,11 @@ def get_git_commit():
 
 
 def get_dependency_versions():
+    import importlib.metadata
     versions = {}
     for pkg in ["pandas", "numpy", "scikit-learn", "matplotlib", "joblib"]:
         try:
-            mod = __import__(pkg.replace("-", "_"))
-            versions[pkg] = mod.__version__
+            versions[pkg] = importlib.metadata.version(pkg)
         except Exception:
             versions[pkg] = "unknown"
     versions["python"] = sys.version.split()[0]
