@@ -13,17 +13,18 @@
 
 ## 二、训练配置
 
-建议的第一版配置：
+第一版候选配置：
 
 ```python
 DecisionTreeClassifier(
     max_depth=4,
     min_samples_leaf=10,
     random_state=42,
+    class_weight=None,  # 必须与 balanced 对照
 )
 ```
 
-配置不是固定结论，最终应通过验证集或交叉验证比较。每次训练都要保存：
+配置不是固定结论，必须比较 `class_weight=None` 与 `balanced`，并通过训练集交叉验证和独立测试集结果选择。每次训练都要保存：
 
 - 数据文件版本或校验值；
 - 特征列表；
@@ -31,6 +32,7 @@ DecisionTreeClassifier(
 - 模型参数；
 - 训练和测试样本数；
 - 类别比例。
+- 交叉验证比较结果。
 
 ## 三、评估指标
 

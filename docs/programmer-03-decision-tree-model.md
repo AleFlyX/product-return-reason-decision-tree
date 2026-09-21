@@ -11,7 +11,7 @@
 ```text
 /project/product-return/feature-split/train/data_version=<data_version>/
 /project/product-return/feature-split/test/data_version=<data_version>/
-/project/product-return/feature/schema/data_version=<data_version>/
+/project/product-return/feature-split/schema/data_version=<data_version>/
 ```
 
 输出：
@@ -28,18 +28,18 @@
 
 ## 三、训练约束
 
-第一版基线：
+第一版候选配置：
 
 ```python
 DecisionTreeClassifier(
     max_depth=4,
     min_samples_leaf=10,
     random_state=42,
-    class_weight=None,
+    class_weight=None,  # 与 balanced 一起比较
 )
 ```
 
-可以对 `class_weight="balanced"` 做对照实验，但必须用测试集或交叉验证结果说明是否采用，不能凭感觉打开。
+必须同时比较 `class_weight=None` 和 `class_weight="balanced"`，并依据训练集交叉验证及独立测试集的 Recall、Precision、F1 和混淆矩阵选择，不能凭感觉打开。
 
 每个模型版本必须记录：
 
@@ -181,6 +181,7 @@ category_服饰 <= 0.5
 ## 十、验收清单
 
 - [ ] 模型从 HDFS 训练数据生成。
+- [ ] 本地开发时可从 `data/feature-split/` 的 CSV/Parquet 生成同样产物；正式验收仍需 HDFS。
 - [ ] 完整 Pipeline 由程序员③拟合并保存，可直接接收 API 原始字段。
 - [ ] 指标来自独立测试集。
 - [ ] 模型文件、指标、规则和元数据在 HDFS 同一版本目录。
