@@ -41,9 +41,9 @@ class CSVFallbackRepository:
         rows: list[dict] = []
         with open(path, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
-            for i, r in enumerate(reader, start=1):
+            for r in reader:
                 rows.append({
-                    "order_id": str(i),
+                    "order_id": r.get("order_id", ""),
                     "category": r["category"],
                     "price": float(r["price"]),
                     "is_promotion": int(r["is_promotion"]),
@@ -165,13 +165,18 @@ class CSVFallbackRepository:
 
     # --- model files ---
 
+    def get_model_version(self) -> str:
+        """Read model_version from metadata, falling back to env."""
+        meta = self._read_json(settings.MODEL_METADATA)
+        return meta.get("model_version", settings.MODEL_VERSION or "unknown")
+
     def get_model_metrics(self) -> dict:
         data = self._read_json(settings.MODEL_METRICS)
         if not data:
             return {}
         meta = self._read_json(settings.MODEL_METADATA)
         return {
-            "model": settings.MODEL_NAME,
+            "model": meta.get("model_name", settings.MODEL_NAME),
             "model_version": meta.get("model_version", settings.MODEL_VERSION),
             "accuracy": data.get("test_accuracy", 0.0),
             "precision": data.get("test_precision", 0.0),
@@ -186,8 +191,7 @@ class CSVFallbackRepository:
     def get_model_features(self) -> dict:
         data = self._read_json(settings.MODEL_FEATURES)
         if isinstance(data, list):
-            items = [{"feature": d["feature"], "importance": d["importance"]} for d in data]
-            return {"items": items}
+            return {"items": data}
         return data if data else {"items": []}
 
     def get_model_rules(self, limit: int = 20) -> dict:
@@ -300,7 +304,7 @@ class CSVFallbackRepository:
                     "returned": prob_returned,
                 },
                 "model": settings.MODEL_NAME,
-                "model_version": settings.MODEL_VERSION,
+                "model_version": self.get_model_version(),
             }
         except Exception:
             return self._mock_predict(payload)
@@ -321,5 +325,5 @@ class CSVFallbackRepository:
                 "returned": round(prob, 4),
             },
             "model": settings.MODEL_NAME,
-            "model_version": settings.MODEL_VERSION,
+            "model_version": self.get_model_version(),
         }

@@ -21,7 +21,7 @@ class Settings:
     HBASE_PREDICTIONS_TABLE: str = os.getenv("HBASE_PREDICTIONS_TABLE", "pr_predictions")
 
     MODEL_NAME: str = os.getenv("MODEL_NAME", "decision-tree")
-    MODEL_VERSION: str = os.getenv("MODEL_VERSION", "dt-20260920-001")
+    MODEL_VERSION: str = os.getenv("MODEL_VERSION", "")  # 读取自 model_metadata.json
 
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
     PROJECT_ROOT: Path = BASE_DIR.parent
@@ -34,7 +34,7 @@ class Settings:
     MODEL_METADATA: Path = MODEL_DIR / "model_metadata.json"
     COMPARISON_REPORT: Path = MODEL_DIR / "comparison_report.json"
 
-    CSV_ORDERS: Path = PROJECT_ROOT / "data" / "clean" / "return_model_mock.csv"
+    CSV_ORDERS: Path = PROJECT_ROOT / "data" / "clean" / "return_model.csv"
     FEATURE_SCHEMA: Path = PROJECT_ROOT / "data" / "reports" / "feature_schema.json"
 
     @property

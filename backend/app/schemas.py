@@ -98,6 +98,7 @@ class ModelMetrics(BaseModel):
 class FeatureItem(BaseModel):
     feature: str
     importance: float
+    source_field: Optional[str] = None
 
 
 class RuleItem(BaseModel):
@@ -106,6 +107,7 @@ class RuleItem(BaseModel):
     predicted_returned: int
     return_probability: float
     sample_count: int
+    model_version: Optional[str] = None
 
 
 class PredictionItem(BaseModel):
