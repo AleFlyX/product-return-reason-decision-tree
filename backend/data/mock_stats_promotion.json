@@ -1,0 +1,18 @@
+{
+    "data_version":  "20260910-001",
+    "updated_at":  "2026-09-10T12:00:00Z",
+    "items":  [
+                  {
+                      "is_promotion":  0,
+                      "sample_count":  340,
+                      "return_rate":  0.144,
+                      "returned_count":  49
+                  },
+                  {
+                      "is_promotion":  1,
+                      "sample_count":  160,
+                      "return_rate":  0.263,
+                      "returned_count":  42
+                  }
+              ]
+}
