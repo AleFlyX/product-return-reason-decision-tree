@@ -101,8 +101,11 @@ def build_pipeline(params: dict, imputation_config: dict = None) -> Pipeline:
     numeric_transformers = []
     for col in NUMERIC_COLS:
         fill_val = numeric_median.get(col, 0.0)
+        # 匹配列的数据类型：is_promotion 是整数，price/freight 是浮点
+        if isinstance(fill_val, float) and fill_val == int(fill_val):
+            fill_val = int(fill_val)
         numeric_transformers.append((
-            f"num__{col}",
+            f"num_{col}",
             SimpleImputer(strategy="constant", fill_value=fill_val),
             [col],
         ))
@@ -257,6 +260,26 @@ def run_grid_experiment(X_train, y_train, X_test, y_test, imputation_config):
 # 6. 导出特征重要性
 # ============================================================
 
+def _clean_feature_name(feat: str) -> str:
+    """清理 Pipeline 产生的特征名前缀。"""
+    for prefix in ["categorical__", "numeric__", "num_price__", "num_is_promotion__",
+                    "num_freight__", "num_price_", "num_is_promotion_", "num_freight_"]:
+        if feat.startswith(prefix):
+            feat = feat[len(prefix):]
+            break
+    return feat
+
+def _get_source_field(feat: str) -> str:
+    """从编码后的特征名还原原始字段名。"""
+    cleaned = _clean_feature_name(feat)
+    for col in CATEGORICAL_COLS:
+        if cleaned.startswith(f"{col}_"):
+            return col
+    for col in NUMERIC_COLS:
+        if cleaned == col:
+            return col
+    return cleaned
+
 def export_feature_importance(pipeline: Pipeline) -> list:
     feature_names = pipeline.named_steps["preprocess"].get_feature_names_out()
     importances = pipeline.named_steps["classifier"].feature_importances_
@@ -267,18 +290,9 @@ def export_feature_importance(pipeline: Pipeline) -> list:
     for idx in sorted_idx:
         feat = feature_names[idx]
         imp = round(float(importances[idx]), 4)
+        clean_name = _clean_feature_name(feat)
+        source_field = _get_source_field(feat)
 
-        source_field = feat
-        if feat.startswith("categorical__"):
-            rest = feat.replace("categorical__", "")
-            for col in CATEGORICAL_COLS:
-                if rest.startswith(f"{col}_"):
-                    source_field = col
-                    break
-        elif feat.startswith("numeric__"):
-            source_field = feat.replace("numeric__", "")
-
-        clean_name = feat.replace("categorical__", "").replace("numeric__", "")
         result.append({
             "feature": clean_name,
             "importance": imp,
@@ -296,7 +310,7 @@ def export_feature_importance(pipeline: Pipeline) -> list:
 def export_rules(pipeline: Pipeline, X_train, y_train) -> list:
     tree = pipeline.named_steps["classifier"]
     feature_names = pipeline.named_steps["preprocess"].get_feature_names_out()
-    feature_names = [f.replace("categorical__", "").replace("numeric__", "") for f in feature_names]
+    feature_names = [_clean_feature_name(f) for f in feature_names]
 
     t = tree.tree_
     n_nodes = t.node_count
@@ -389,7 +403,7 @@ def export_rules(pipeline: Pipeline, X_train, y_train) -> list:
 def plot_decision_tree(pipeline: Pipeline, output_path: str):
     tree = pipeline.named_steps["classifier"]
     feature_names = pipeline.named_steps["preprocess"].get_feature_names_out()
-    feature_names = [f.replace("categorical__", "").replace("numeric__", "") for f in feature_names]
+    feature_names = [_clean_feature_name(f) for f in feature_names]
 
     plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "Arial Unicode MS"]
     plt.rcParams["axes.unicode_minus"] = False
