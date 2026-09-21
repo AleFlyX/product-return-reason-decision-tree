@@ -1,33 +1,33 @@
 [
   {
     "feature": "category_食品生鲜",
-    "importance": 0.5463,
+    "importance": 0.5754,
     "source_field": "category"
   },
   {
     "feature": "freight",
-    "importance": 0.221,
+    "importance": 0.2536,
     "source_field": "freight"
   },
   {
     "feature": "category_服饰",
-    "importance": 0.1283,
+    "importance": 0.1494,
     "source_field": "category"
   },
   {
     "feature": "price",
-    "importance": 0.068,
+    "importance": 0.0167,
     "source_field": "price"
   },
   {
-    "feature": "is_promotion",
-    "importance": 0.0365,
-    "source_field": "is_promotion"
+    "feature": "season_春",
+    "importance": 0.0049,
+    "source_field": "season"
   },
   {
-    "feature": "season_秋",
+    "feature": "is_promotion",
     "importance": 0.0,
-    "source_field": "season"
+    "source_field": "is_promotion"
   },
   {
     "feature": "season_夏",
@@ -35,7 +35,7 @@
     "source_field": "season"
   },
   {
-    "feature": "season_春",
+    "feature": "season_秋",
     "importance": 0.0,
     "source_field": "season"
   },

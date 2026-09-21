@@ -10,6 +10,7 @@
 | [data-dictionary.md](data-dictionary.md) | 订单、退货和模型字段定义 | 程序员① |
 | [data-collection.md](data-collection.md) | 数据采集、清洗和标签构造 | 程序员① |
 | [feature-engineering.md](feature-engineering.md) | 编码、划分、泄漏检查和 Pipeline | 程序员② |
+| [handoff-programmer-02.md](handoff-programmer-02.md) | 特征工程实施结果、批次产物与给③④的交接说明 | 程序员② |
 | [03-商品退货原因分析-决策树.md](03-商品退货原因分析-决策树.md) | 决策树项目方案和答辩重点 | 程序员③ |
 | [model.md](model.md) | 训练、评估、规则导出和模型交付 | 程序员③ |
 | [backend-hadoop.md](backend-hadoop.md) | FastAPI、HDFS/HBase 数据访问和服务链路 | 程序员④ |

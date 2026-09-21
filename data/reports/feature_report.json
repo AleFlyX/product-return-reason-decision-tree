@@ -11,15 +11,15 @@
   "target_col": "returned",
   "train_samples": 24150,
   "test_samples": 10350,
-  "train_return_rate": 0.0552,
-  "test_return_rate": 0.0552,
+  "train_return_rate": 0.0463,
+  "test_return_rate": 0.0464,
   "train_class_counts": {
-    "0": 22818,
-    "1": 1332
+    "0": 23031,
+    "1": 1119
   },
   "test_class_counts": {
-    "0": 9779,
-    "1": 571
+    "0": 9870,
+    "1": 480
   },
   "split_seed": 42,
   "test_size": 0.3,
@@ -42,9 +42,9 @@
     "parameters": {
       "fitted_on": "train",
       "numeric_median": {
-        "price": 45.644999999999996,
+        "price": 45.44,
         "is_promotion": 0.0,
-        "freight": 6.11
+        "freight": 6.1
       },
       "categorical_unknown": {
         "category": "UNKNOWN",
@@ -81,7 +81,7 @@
     "reason": "契约要求订单级划分，且本数据集 order_id 无重复、训练/测试无订单交叉；product_id 共 24912 个（平均 1.4 单/商品）几乎无分组意义，customer_id 共 7903 个（人均 4.4 单）不在契约特征内，为避免样本量损失和跨集泄漏风险，采用分层随机划分而非 Group split"
   },
   "class_imbalance": {
-    "minority_rate": 0.0552,
+    "minority_rate": 0.0463,
     "warning": "少数类占比低于 20%，决策树必须使用 class_weight='balanced'，否则会全部预测为多数类，accuracy 虚高但 recall 为 0"
   },
   "leakage_fields": [],
@@ -138,7 +138,8 @@
     "freight 取自原始 shipping_cost，为真实运费，非派生假设值",
     "is_promotion = (discount > 0)，discount 为折扣比率",
     "season 由 order_date（DD/MM/YYYY，已按 dayfirst 解析）月份派生",
-    "returned 采信原始 returned 字段（Yes=1 / No=0）",
+    "returned 口径=window_30d：以原始 returned 字段（Yes=1）为基础，仅保留下单后 30 天内发生的退货，超期记为 0",
+    "本批共 1903 条退货，其中 304 条发生在 30 天之外，按窗口口径记为负样本",
     "标签由宽表直接映射，无法由订单表与退货表按 order_id 重建（原始数据无两张独立表）"
   ],
   "hdfs_train_path": "/project/product-return/feature-split/train/data_version=return-model-v1/",
