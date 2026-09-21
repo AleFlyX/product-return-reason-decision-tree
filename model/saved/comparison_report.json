@@ -1,7 +1,7 @@
 {
   "experiment": "parameter grid search (4×3×2=24 combinations)",
   "data_version": "return-model-v1",
-  "model_version": "dt-20260921-002",
+  "model_version": "dt-20260921-547668a1c65c",
   "dataset": {
     "train_samples": 24150,
     "test_samples": 10350,

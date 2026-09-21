@@ -1,6 +1,6 @@
 {
   "model_name": "decision-tree",
-  "model_version": "dt-20260921-002",
+  "model_version": "dt-20260921-547668a1c65c",
   "data_version": "return-model-v1",
   "model_type": "DecisionTreeClassifier",
   "pipeline_version": "1.0",
@@ -17,15 +17,15 @@
     "freight"
   ],
   "target_col": "returned",
-  "train_time_seconds": 0.03,
+  "train_time_seconds": 0.04,
   "train_samples": 24150,
   "test_samples": 10350,
-  "created_at": "2026-09-21T19:40:34.442318",
-  "artifact_path": "/project/product-return/model/model_name=decision-tree/model_version=dt-20260921-002/",
+  "created_at": "2026-09-21T19:53:17.971793",
+  "artifact_path": "/project/product-return/model/model_name=decision-tree/model_version=dt-20260921-547668a1c65c/",
   "status": "ready",
   "hdfs_train_path": "/project/product-return/feature-split/train/data_version=return-model-v1/part-0.csv",
   "hdfs_test_path": "/project/product-return/feature-split/test/data_version=return-model-v1/part-0.csv",
-  "git_commit": "53a6b4ec25c7",
+  "git_commit": "547668a1c65c",
   "dependency_versions": {
     "pandas": "2.3.3",
     "numpy": "2.2.6",

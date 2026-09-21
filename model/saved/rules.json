@@ -9,7 +9,7 @@
     "predicted_returned": 1,
     "return_probability": 0.553,
     "sample_count": 8888,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-0",
@@ -21,7 +21,7 @@
     "predicted_returned": 0,
     "return_probability": 0.4241,
     "sample_count": 8047,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-2",
@@ -33,7 +33,7 @@
     "predicted_returned": 1,
     "return_probability": 0.5681,
     "sample_count": 2181,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-3",
@@ -45,7 +45,7 @@
     "predicted_returned": 1,
     "return_probability": 0.6414,
     "sample_count": 2151,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-7",
@@ -57,7 +57,7 @@
     "predicted_returned": 0,
     "return_probability": 0.1899,
     "sample_count": 2043,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-6",
@@ -69,7 +69,7 @@
     "predicted_returned": 0,
     "return_probability": 0.3337,
     "sample_count": 421,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-4",
@@ -81,7 +81,7 @@
     "predicted_returned": 0,
     "return_probability": 0.0,
     "sample_count": 332,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   },
   {
     "rule_id": "leaf-5",
@@ -93,6 +93,6 @@
     "predicted_returned": 0,
     "return_probability": 0.1931,
     "sample_count": 87,
-    "model_version": "dt-20260921-002"
+    "model_version": "dt-20260921-547668a1c65c"
   }
 ]
