@@ -69,9 +69,9 @@
   "imputation_parameters": {
     "fitted_on": "train",
     "numeric_median": {
-      "price": 45.644999999999996,
+      "price": 45.44,
       "is_promotion": 0.0,
-      "freight": 6.11
+      "freight": 6.1
     },
     "categorical_unknown": {
       "category": "UNKNOWN",

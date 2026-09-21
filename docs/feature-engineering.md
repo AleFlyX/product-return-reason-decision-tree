@@ -141,3 +141,8 @@ data/reports/feature_report.json
 ```
 
 `feature_report.json` 至少记录原始特征、编码后的特征名称、训练/测试数量、标签分布和泄漏检查结果。
+
+## 八、实施结果与交接
+
+本规范的实际执行结果、批次产物路径和给程序员③④的交接说明见
+[handoff-programmer-02.md](handoff-programmer-02.md)。

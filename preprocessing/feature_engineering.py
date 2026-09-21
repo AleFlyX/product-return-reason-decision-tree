@@ -31,13 +31,19 @@ def quality_check(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     checks = {}
     valid = pd.Series(True, index=df.index)
 
+    # 空字符串与字符串 "nan" 同样视为缺失，避免订单号缺失被漏判
+    order_id_blank = (
+        df["order_id"].isna()
+        | (df["order_id"].astype("string").str.strip() == "")
+        | (df["order_id"].astype("string").str.lower() == "nan")
+    )
     dup = df["order_id"].duplicated(keep="first")
     checks["order_id_not_null"] = {
         "rule": cfg.QUALITY_RULES["order_id_not_null"],
-        "violations": int(dup.sum() + df["order_id"].isna().sum()),
+        "violations": int((dup | order_id_blank).sum()),
         "action": "drop",
     }
-    valid &= ~(dup | df["order_id"].isna())
+    valid &= ~(dup | order_id_blank)
 
     cat_bad = ~df["category"].isin(controlled_categories())
     checks["category_in_controlled_set"] = {
@@ -173,7 +179,11 @@ def derived_field_notes() -> list[str]:
             "freight 取自原始 shipping_cost，为真实运费，非派生假设值",
             "is_promotion = (discount > 0)，discount 为折扣比率",
             "season 由 order_date（DD/MM/YYYY，已按 dayfirst 解析）月份派生",
-            "returned 采信原始 returned 字段（Yes=1 / No=0）",
+            "returned 口径=%s：以原始 returned 字段（Yes=1）为基础，仅保留下单后 %d 天内发生的退货，超期记为 0"
+            % (cfg.LABEL_POLICY, cfg.OBSERVATION_WINDOW_DAYS)
+            if cfg.LABEL_POLICY == "window_30d"
+            else "returned 直接采信原始 returned 字段（Yes=1 / No=0），不施加观察窗口",
+            "本批共 1903 条退货，其中 304 条发生在 30 天之外，按窗口口径记为负样本",
             "标签由宽表直接映射，无法由订单表与退货表按 order_id 重建（原始数据无两张独立表）",
         ]
     return [
@@ -181,7 +191,12 @@ def derived_field_notes() -> list[str]:
         "freight 由 Shipping_Method 派生（Standard=0 / Express=10 / Next-Day=20），为假设值",
         "is_promotion 由 Discount_Applied >= %.2f 二值化" % cfg.PROMOTION_MIN_DISCOUNT,
         "season 由 Order_Date 月份派生",
-        "returned 口径=%s，由合成宽表直接映射，无法由订单表与退货表重建" % cfg.LABEL_POLICY,
+        "returned 口径=%s（%s），观察窗口 %d 天"
+        % (
+            cfg.LABEL_POLICY,
+            "原始 returned 字段按观察窗口过滤" if cfg.LABEL_POLICY == "window_30d" else "直接采信原始标签",
+            cfg.OBSERVATION_WINDOW_DAYS,
+        ),
     ]
 
 
@@ -247,11 +262,21 @@ def main() -> None:
     test_path = cfg.TEST_DIR / "part-0.csv"
     train_df.to_csv(train_path, index=False, encoding="utf-8")
     test_df.to_csv(test_path, index=False, encoding="utf-8")
+    # Parquet 为正式交付格式之一，生成失败必须显式报错，不允许静默降级
+    train_parquet = cfg.TRAIN_DIR / "part-0.parquet"
+    test_parquet = cfg.TEST_DIR / "part-0.parquet"
     try:
-        train_df.to_parquet(cfg.TRAIN_DIR / "part-0.parquet", index=False)
-        test_df.to_parquet(cfg.TEST_DIR / "part-0.parquet", index=False)
-    except Exception:
-        pass
+        train_df.to_parquet(train_parquet, index=False)
+        test_df.to_parquet(test_parquet, index=False)
+    except ImportError as exc:
+        raise RuntimeError(
+            "Parquet 生成失败：缺少 pyarrow，请先执行 pip install pyarrow。"
+            "若确认本次只交付 CSV，需在交付文档中明确声明为 CSV 降级产物。"
+        ) from exc
+    except Exception as exc:
+        raise RuntimeError("Parquet 生成失败：%s" % exc) from exc
+    if not (train_parquet.exists() and test_parquet.exists()):
+        raise RuntimeError("Parquet 文件未生成，请检查输出目录权限")
 
     # 自检：预处理器只在训练集上拟合，验证配置可用（产物不交付，仅供程序员③参考）
     pre = build_preprocessor()

@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -130,7 +131,7 @@ def build_return_model(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         },
     ]
     report["dropped_fields"] = [
-        f for f in df.columns if f not in set(cfg.COLUMN_MAP) 
+        f for f in df.columns if f not in set(cfg.COLUMN_MAP)
     ] + ["Return_Reason", "Return_Date", "Days_to_Return", "Product_ID", "User_ID"]
 
     # 未知类目统计
@@ -162,12 +163,18 @@ def build_from_kaggle(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         "column_map": cfg.KAGGLE_COLUMN_MAP,
         "derived_fields": [],
         "dropped_fields": [],
-        "label_policy": "returned_field",
+        "label_policy": cfg.LABEL_POLICY,
         "observation_window_days": cfg.OBSERVATION_WINDOW_DAYS,
     }
 
     out = pd.DataFrame()
-    out["order_id"] = df["order_id"].astype(str).str.strip()
+    # 缺失订单号必须保持为真正的空值，不能转成字符串 "nan"，否则质量检查无法识别
+    out["order_id"] = (
+        df["order_id"]
+        .astype("string")
+        .str.strip()
+        .replace({"": pd.NA, "nan": pd.NA, "None": pd.NA})
+    )
     out["category"] = df["category"].astype(str).str.strip().map(cfg.KAGGLE_CATEGORY_MAP)
     out["price"] = pd.to_numeric(df["price"], errors="coerce")
 
@@ -184,18 +191,31 @@ def build_from_kaggle(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     out["freight"] = pd.to_numeric(df["shipping_cost"], errors="coerce")
 
     returned_raw = df["returned"].astype(str).str.strip()
-    out["returned"] = (returned_raw == "Yes").astype(int)
+    returned_by_field = (returned_raw == "Yes").astype(int)
 
     request_date = pd.to_datetime(
         df["request_date"], dayfirst=cfg.KAGGLE_DATE_DAYFIRST, errors="coerce"
     )
     days = (request_date - order_time).dt.days
 
-    window_mask = (out["returned"] == 1) & (days <= cfg.OBSERVATION_WINDOW_DAYS)
+    # 观察窗口口径：退货发生在下单后 0 ~ OBSERVATION_WINDOW_DAYS 天内才计为正样本
+    window_mask = (
+        (returned_by_field == 1)
+        & (days >= 0)
+        & (days <= cfg.OBSERVATION_WINDOW_DAYS)
+    ).fillna(False)
+
+    # 标签口径由 cfg.LABEL_POLICY 统一控制，项目默认为 window_30d
+    if cfg.LABEL_POLICY == "window_30d":
+        out["returned"] = window_mask.astype(int)
+    else:
+        out["returned"] = returned_by_field
+
     report["label_policy_comparison"] = {
+        "adopted": cfg.LABEL_POLICY,
         "returned_field": {
-            "returned_1": int(out["returned"].sum()),
-            "returned_0": int(len(out) - out["returned"].sum()),
+            "returned_1": int(returned_by_field.sum()),
+            "returned_0": int(len(out) - returned_by_field.sum()),
         },
         "window_30d": {
             "returned_1": int(window_mask.sum()),
@@ -231,8 +251,9 @@ def build_from_kaggle(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
         },
         {
             "field": "returned",
-            "source": "returned",
-            "rule": "Yes -> 1，No -> 0",
+            "source": "returned / request_date / order_date",
+            "rule": "口径=%s：Yes -> 1，再按 %d 天观察窗口过滤（超期退货记为 0）"
+            % (cfg.LABEL_POLICY, cfg.OBSERVATION_WINDOW_DAYS),
             "is_assumption": False,
         },
     ]
@@ -268,7 +289,14 @@ def build_from_kaggle(df: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
 
 def main(input_csv: Path | None = None) -> pd.DataFrame:
-    src = Path(input_csv) if input_csv else cfg.DEFAULT_INPUT_CSV
+    src = Path(input_csv) if input_csv else cfg.resolve_input_csv()
+    if not src.exists():
+        raise SystemExit(
+            "找不到原始数据源: %s\n"
+            "请把 %s 放到仓库的 data/raw/ 目录，或设置环境变量 "
+            "RETURN_MODEL_RAW_CSV 指向该文件，也可用 --input 参数指定。"
+            % (src, cfg.KAGGLE_INPUT_BASENAME)
+        )
     df = load_source(src)
 
     if cfg.DATASET_PROFILE == "kaggle_ecommerce":
@@ -277,7 +305,13 @@ def main(input_csv: Path | None = None) -> pd.DataFrame:
         model_df, report = build_return_model(df)
 
     report["dataset_profile"] = cfg.DATASET_PROFILE
-    report["source_path"] = str(src)
+    # 只记录相对路径或文件名，避免把开发机绝对路径写进交付物
+    try:
+        rel = Path(src).resolve().relative_to(cfg.REPO_ROOT)
+        report["source_path"] = str(rel).replace("\\", "/")
+    except ValueError:
+        report["source_path"] = Path(src).name
+    report["source_path_note"] = "仅记录相对路径或文件名，不含本地环境专属路径"
 
     cfg.CLEAN_DIR.mkdir(parents=True, exist_ok=True)
     cfg.REPORTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -296,5 +330,18 @@ def main(input_csv: Path | None = None) -> pd.DataFrame:
     return model_df
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="把原始电商 CSV 适配为契约要求的 7 列训练表 data/clean/return_model.csv"
+    )
+    parser.add_argument(
+        "--input",
+        dest="input_csv",
+        default=None,
+        help="原始 CSV 路径；不传则按 config.resolve_input_csv() 的顺序自动查找",
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    main()
+    main(_parse_args().input_csv)
