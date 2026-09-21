@@ -1,0 +1,59 @@
+{
+    "items":  [
+                  {
+                      "sample_count":  86,
+                      "rule_id":  "leaf-3",
+                      "return_probability":  0.71,
+                      "predicted_returned":  1,
+                      "conditions":  [
+                                         "price \u003c= 120.50",
+                                         "is_promotion = 1",
+                                         "category = 服饰"
+                                     ]
+                  },
+                  {
+                      "sample_count":  64,
+                      "rule_id":  "leaf-7",
+                      "return_probability":  0.12,
+                      "predicted_returned":  0,
+                      "conditions":  [
+                                         "price \u003e 120.50",
+                                         "is_promotion = 0",
+                                         "category = 家电"
+                                     ]
+                  },
+                  {
+                      "sample_count":  43,
+                      "rule_id":  "leaf-12",
+                      "return_probability":  0.65,
+                      "predicted_returned":  1,
+                      "conditions":  [
+                                         "price \u003c= 80",
+                                         "is_promotion = 1",
+                                         "season = 夏"
+                                     ]
+                  },
+                  {
+                      "sample_count":  52,
+                      "rule_id":  "leaf-15",
+                      "return_probability":  0.08,
+                      "predicted_returned":  0,
+                      "conditions":  [
+                                         "price \u003e 200",
+                                         "is_promotion = 0",
+                                         "freight \u003c= 5"
+                                     ]
+                  },
+                  {
+                      "sample_count":  38,
+                      "rule_id":  "leaf-20",
+                      "return_probability":  0.58,
+                      "predicted_returned":  1,
+                      "conditions":  [
+                                         "price \u003c= 150",
+                                         "is_promotion = 1",
+                                         "category = 食品"
+                                     ]
+                  }
+              ]
+}

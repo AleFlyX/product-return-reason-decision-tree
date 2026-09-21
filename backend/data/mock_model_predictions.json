@@ -1,0 +1,64 @@
+{
+    "items":  [
+                  {
+                      "return_probability":  0.72,
+                      "predicted_returned":  1,
+                      "actual_returned":  1,
+                      "index":  1
+                  },
+                  {
+                      "return_probability":  0.15,
+                      "predicted_returned":  0,
+                      "actual_returned":  0,
+                      "index":  2
+                  },
+                  {
+                      "return_probability":  0.68,
+                      "predicted_returned":  1,
+                      "actual_returned":  1,
+                      "index":  3
+                  },
+                  {
+                      "return_probability":  0.22,
+                      "predicted_returned":  0,
+                      "actual_returned":  0,
+                      "index":  4
+                  },
+                  {
+                      "return_probability":  0.41,
+                      "predicted_returned":  0,
+                      "actual_returned":  1,
+                      "index":  5
+                  },
+                  {
+                      "return_probability":  0.18,
+                      "predicted_returned":  0,
+                      "actual_returned":  0,
+                      "index":  6
+                  },
+                  {
+                      "return_probability":  0.75,
+                      "predicted_returned":  1,
+                      "actual_returned":  1,
+                      "index":  7
+                  },
+                  {
+                      "return_probability":  0.12,
+                      "predicted_returned":  0,
+                      "actual_returned":  0,
+                      "index":  8
+                  },
+                  {
+                      "return_probability":  0.63,
+                      "predicted_returned":  1,
+                      "actual_returned":  1,
+                      "index":  9
+                  },
+                  {
+                      "return_probability":  0.28,
+                      "predicted_returned":  0,
+                      "actual_returned":  0,
+                      "index":  10
+                  }
+              ]
+}
