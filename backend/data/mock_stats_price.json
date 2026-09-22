@@ -1,0 +1,30 @@
+{
+    "data_version":  "20260910-001",
+    "updated_at":  "2026-09-10T12:00:00Z",
+    "items":  [
+                  {
+                      "returned_count":  35,
+                      "price_range":  "0-100",
+                      "sample_count":  130,
+                      "return_rate":  0.269
+                  },
+                  {
+                      "returned_count":  28,
+                      "price_range":  "100-200",
+                      "sample_count":  150,
+                      "return_rate":  0.187
+                  },
+                  {
+                      "returned_count":  16,
+                      "price_range":  "200-300",
+                      "sample_count":  110,
+                      "return_rate":  0.145
+                  },
+                  {
+                      "returned_count":  12,
+                      "price_range":  "300-500",
+                      "sample_count":  110,
+                      "return_rate":  0.109
+                  }
+              ]
+}

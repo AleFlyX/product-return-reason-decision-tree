@@ -1,0 +1,52 @@
+{
+    "items":  [
+                  {
+                      "returned_count":  22,
+                      "category":  "服饰",
+                      "sample_count":  80,
+                      "return_rate":  0.275
+                  },
+                  {
+                      "returned_count":  15,
+                      "category":  "数码",
+                      "sample_count":  70,
+                      "return_rate":  0.214
+                  },
+                  {
+                      "returned_count":  10,
+                      "category":  "家电",
+                      "sample_count":  60,
+                      "return_rate":  0.167
+                  },
+                  {
+                      "returned_count":  14,
+                      "category":  "食品",
+                      "sample_count":  55,
+                      "return_rate":  0.255
+                  },
+                  {
+                      "returned_count":  11,
+                      "category":  "美妆",
+                      "sample_count":  65,
+                      "return_rate":  0.169
+                  },
+                  {
+                      "returned_count":  7,
+                      "category":  "家居",
+                      "sample_count":  50,
+                      "return_rate":  0.14
+                  },
+                  {
+                      "returned_count":  6,
+                      "category":  "运动",
+                      "sample_count":  45,
+                      "return_rate":  0.133
+                  },
+                  {
+                      "returned_count":  6,
+                      "category":  "图书",
+                      "sample_count":  75,
+                      "return_rate":  0.08
+                  }
+              ]
+}
