@@ -85,6 +85,7 @@ class PredictResponse(BaseModel):
 class ModelMetrics(BaseModel):
     model: str
     model_version: str
+    data_version: Optional[str] = None
     accuracy: float
     precision: float
     recall: float
