@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import * as echarts from 'echarts/core'
 import { BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
@@ -15,10 +15,17 @@ const props = defineProps<{
 const chartRef = ref<HTMLDivElement>()
 let chart: echarts.ECharts | null = null
 
+const isEmpty = computed(() => !props.data || props.data.length === 0)
+
 function renderChart() {
   if (!chart) return
+  if (isEmpty.value) {
+    chart.clear()
+    return
+  }
 
   const sorted = [...props.data].sort((a, b) => b.importance - a.importance)
+  const maxImportance = Math.max(...sorted.map(d => d.importance))
 
   chart.setOption({
     title: { text: '特征重要性', left: 'center', textStyle: { fontSize: 15 } },
@@ -34,7 +41,7 @@ function renderChart() {
     xAxis: {
       type: 'value',
       name: '重要性',
-      max: Math.max(...sorted.map(d => d.importance)) * 1.1,
+      max: maxImportance * 1.1,
     },
     yAxis: {
       type: 'category',
@@ -83,13 +90,36 @@ watch(() => props.data, () => {
 </script>
 
 <template>
-  <div ref="chartRef" class="chart-container" />
+  <div class="chart-wrapper">
+    <div ref="chartRef" class="chart-container" />
+    <div v-if="isEmpty" class="chart-empty">暂无数据</div>
+  </div>
 </template>
 
 <style scoped>
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+}
+
 .chart-container {
   width: 100%;
   height: 320px;
   min-height: 320px;
+}
+
+.chart-empty {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0b0b0;
+  font-size: 14px;
+  background: #fff;
 }
 </style>

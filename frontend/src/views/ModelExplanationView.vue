@@ -53,6 +53,7 @@ onMounted(loadData)
         <MetricCard label="训练集样本" :value="metrics.train_samples" />
         <MetricCard label="测试集样本" :value="metrics.test_samples" />
         <MetricCard label="模型版本" :value="metrics.model_version" />
+        <MetricCard label="数据版本" :value="metrics.data_version || '未知'" />
         <MetricCard label="测试集退货率" :value="(metrics.returned_rate_test * 100).toFixed(1)" suffix="%" />
       </div>
 

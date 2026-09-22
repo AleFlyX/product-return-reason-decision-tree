@@ -80,6 +80,7 @@ export interface PredictResponse {
 export interface ModelMetrics {
   model: string
   model_version: string
+  data_version?: string
   accuracy: number
   precision: number
   recall: number

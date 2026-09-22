@@ -42,7 +42,7 @@ function renderChart() {
     title: { text: '混淆矩阵', left: 'center', textStyle: { fontSize: 15 } },
     tooltip: {
       formatter: (p: { data: [number, number, number] }) => {
-        const [actual, predicted, value] = p.data
+        const [predicted, actual, value] = p.data
         return `实际: ${labels[actual]}<br/>预测: ${labels[predicted]}<br/>样本数: ${value}`
       },
     },

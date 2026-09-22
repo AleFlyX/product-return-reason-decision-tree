@@ -55,6 +55,13 @@ const totalReturned = computed(() =>
 const totalNotReturned = computed(() =>
   categoryData.value.reduce((sum, d) => sum + (d.sample_count - d.returned_count), 0),
 )
+const totalAll = computed(() => totalReturned.value + totalNotReturned.value)
+const returnedPct = computed(() =>
+  totalAll.value > 0 ? (totalReturned.value / totalAll.value) * 100 : 0,
+)
+const notReturnedPct = computed(() =>
+  totalAll.value > 0 ? (totalNotReturned.value / totalAll.value) * 100 : 0,
+)
 
 onMounted(loadData)
 </script>
@@ -72,29 +79,32 @@ onMounted(loadData)
 
     <template v-if="!loading && !error">
       <div class="chart-card">
-        <ReturnRateChart title="各类目退货率与样本量" :data="categoryData" />
+        <ReturnRateChart v-if="categoryData.length" title="各类目退货率与样本量" :data="categoryData" />
+        <div v-else class="no-data">暂无数据</div>
       </div>
 
       <div class="chart-card">
-        <ReturnRateChart title="促销 vs 非促销退货率" :data="promotionChartData" />
+        <ReturnRateChart v-if="promotionChartData.length" title="促销 vs 非促销退货率" :data="promotionChartData" />
+        <div v-else class="no-data">暂无数据</div>
       </div>
 
       <div class="chart-card">
-        <ReturnRateChart title="价格区间退货率" :data="priceRangeChartData" />
+        <ReturnRateChart v-if="priceRangeChartData.length" title="价格区间退货率" :data="priceRangeChartData" />
+        <div v-else class="no-data">暂无数据</div>
       </div>
 
-      <div class="chart-card summary">
+      <div v-if="totalAll > 0" class="chart-card summary">
         <h3 class="section-title">退货/未退货数量对比</h3>
         <div class="compare-bar">
           <div class="bar-item">
             <span class="bar-label">已退货</span>
-            <div class="bar-bar returned" :style="{ width: `${(totalReturned / (totalReturned + totalNotReturned)) * 100}%` }">
+            <div class="bar-bar returned" :style="{ width: `${returnedPct}%` }">
               {{ totalReturned }}
             </div>
           </div>
           <div class="bar-item">
             <span class="bar-label">未退货</span>
-            <div class="bar-bar not-returned" :style="{ width: `${(totalNotReturned / (totalReturned + totalNotReturned)) * 100}%` }">
+            <div class="bar-bar not-returned" :style="{ width: `${notReturnedPct}%` }">
               {{ totalNotReturned }}
             </div>
           </div>
@@ -172,5 +182,14 @@ onMounted(loadData)
 
 .bar-bar.not-returned {
   background: #52c41a;
+}
+
+.no-data {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #b0b0b0;
+  font-size: 14px;
 }
 </style>

@@ -18,6 +18,10 @@ let chart: echarts.ECharts | null = null
 
 function renderChart() {
   if (!chart) return
+  if (!props.data || props.data.length === 0) {
+    chart.clear()
+    return
+  }
 
   const sorted = [...props.data].sort((a, b) => b.return_rate - a.return_rate)
 

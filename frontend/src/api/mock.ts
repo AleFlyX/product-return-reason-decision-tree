@@ -85,6 +85,7 @@ export function mockPredict(req: PredictRequest): PredictResponse {
 export const mockModelMetrics: ModelMetrics = {
   model: 'decision-tree',
   model_version: '20260910-001',
+  data_version: 'return-model-v1',
   accuracy: 0.84,
   precision: 0.63,
   recall: 0.58,

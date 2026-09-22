@@ -19,8 +19,8 @@ const emit = defineEmits<{
   </div>
   <div v-else-if="error" class="state-box error">
     <span v-if="error.isNetworkError">网络连接失败，请检查后端服务是否启动</span>
-    <span v-else-if="error.isDegraded">数据服务不可用（HDFS/HBase 不可用）</span>
     <span v-else-if="error.isModelNotLoaded">模型未加载，请联系管理员</span>
+    <span v-else-if="error.isDegraded">数据服务不可用（HDFS/HBase 不可用）</span>
     <span v-else>{{ error.message }}</span>
     <button class="retry-btn" @click="emit('retry')">重试</button>
   </div>

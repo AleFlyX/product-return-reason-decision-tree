@@ -259,6 +259,7 @@ class CSVFallbackRepository:
         return {
             "model": meta.get("model_name", settings.MODEL_NAME),
             "model_version": meta.get("model_version", settings.MODEL_VERSION),
+            "data_version": meta.get("data_version"),
             "accuracy": data.get("test_accuracy", 0.0),
             "precision": data.get("test_precision", 0.0),
             "recall": data.get("test_recall", 0.0),
